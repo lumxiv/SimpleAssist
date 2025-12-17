@@ -76,6 +76,25 @@ int main(int argc, const char** argv) {
 
         return pack_anim(anim_idx, bin_in, skl_in, anim_in, anim_out, check_if_bound, compress_anim);
     }
+	else if (operation.compare("quick_pack_anim") == 0) {
+        hkStringBuf anim_idx; // animation index
+        hkStringBuf bin_in; // .bin from blender
+        hkStringBuf skl_in; // original skeleton
+        hkStringBuf anim_in; // original animation
+        hkStringBuf anim_out; // pap animation out
+        hkStringBuf check_if_bound;
+        hkStringBuf compress_anim;
+
+        anim_idx = convert_from_wstring(nargv[2]).c_str();
+        bin_in = convert_from_wstring(nargv[3]).c_str();
+        skl_in = convert_from_wstring(nargv[4]).c_str();
+        anim_in = convert_from_wstring(nargv[5]).c_str();
+        anim_out = convert_from_wstring(nargv[6]).c_str();
+        check_if_bound = convert_from_wstring(nargv[7]).c_str();
+        compress_anim = convert_from_wstring(nargv[8]).c_str();
+
+        return quick_pack_anim(anim_idx, bin_in, skl_in, anim_in, anim_out, check_if_bound, compress_anim);
+    }
     else if (operation.compare("pack_skel") == 0) {
         hkStringBuf bin_in;
         hkStringBuf skl_in;

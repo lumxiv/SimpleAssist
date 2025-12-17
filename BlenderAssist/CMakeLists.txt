@@ -25,11 +25,8 @@ include_directories(
         "$ENV{HAVOK_SDK_ROOT}/Source/"
 )
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    link_directories("$ENV{HAVOK_SDK_ROOT}/Lib/win32_vs2012_win7_noSimd/debug/")
-else()
-    link_directories("$ENV{HAVOK_SDK_ROOT}/Lib/win32_vs2012_win7_noSimd/release/")
-endif()
+link_directories("$ENV{HAVOK_SDK_ROOT}/Lib/win32_vs2012_win7_noSimd/release/")
+
 
 add_definitions(-DUNICODE -D_UNICODE)
 add_executable(blenderassist main.cpp pack_anim.cpp pack_anim.h helper.cpp helper.h extract.cpp extract.h pack_skel.cpp pack_skel.h)
