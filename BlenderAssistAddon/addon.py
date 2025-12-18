@@ -14,8 +14,8 @@ class BlenderAssistProperties(PropertyGroup):
     # Quick Export Anim
     start_frame: IntProperty(
         name = "Start Frame",
-        default = 0,
-        min = 0
+        default = 1,
+        min = 1
     )
     end_frame: IntProperty(
         name = "End Frame",
@@ -69,8 +69,9 @@ class BlenderAssistPanelQuickImportAnim(bpy.types.Panel):
         scene = context.scene
         state = scene.b_assist_props
 
-        layout.label(text="VFXEditor GLTF File")
-        layout.prop(state, "import_path")
+        col = layout.column()
+        col.label(text="VFXEditor Exported GLTF File")
+        col.prop(state, "import_path")
 
         layout.operator(BlenderAssistQuickImportAnim.bl_idname, text="Import", icon="PLAY")
 
@@ -93,7 +94,12 @@ class BlenderAssistQuickImportAnim(Operator):
         for fcurve in ad.action.fcurves:
             for keyframe_point in fcurve.keyframe_points:
                 keyframe_point.co.x *= 1.25
-        print(ad.nla_tracks)  
+        for fcurve in ad.action.fcurves:
+            for keyframe_point in fcurve.keyframe_points:
+                keyframe_point.co.x += 1
+
+        dummy = ob.children[0]
+        bpy.data.objects.remove(dummy)
         
         return {'FINISHED'}
     
@@ -152,21 +158,22 @@ class BlenderAssistPanelQuickExportAnim(bpy.types.Panel):
         state = scene.b_assist_props
 
         if context.object != None and context.object.type == 'ARMATURE':
-            split = layout.row().split(factor=0.244)
-            split.column().label(text="Target")
-            split.column().label(text=context.object.name, icon='ARMATURE_DATA')
+            split = layout.row().split(factor=0.25)
+            split.label(text="Target")
+            split.label(text=context.object.name, icon='ARMATURE_DATA')
 
-            layout.label(text="Output Directory")
-            col = layout.column(align=True)
+            col = layout.column()
+            col.label(text="Output Directory")
             col.prop(state, "output_dir", text="")
 
-            layout.prop(state, "start_frame")
-            layout.prop(state, "end_frame")     
+            box = layout.box()
+            row = box.row(align=True)
+            row.prop(state, "start_frame")
+            row.prop(state, "end_frame")     
 
-            layout.prop(state, "race_list")
-            layout.prop(state, "bones_list")
-
-            layout.prop(state, "compress_anim")
+            box.prop(state, "race_list")
+            box.prop(state, "bones_list")
+            box.prop(state, "compress_anim")
 
             layout.operator(BlenderAssistQuickExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
@@ -177,10 +184,10 @@ class BlenderAssistPanelQuickExportAnim(bpy.types.Panel):
 classes = (
     BlenderAssistProperties,
 
-    BlenderAssistPanelQuickExportAnim,
-    BlenderAssistQuickExportAnim,
     BlenderAssistPanelQuickImportAnim,
     BlenderAssistQuickImportAnim,
+    BlenderAssistPanelQuickExportAnim,
+    BlenderAssistQuickExportAnim,
 )
 
 def register():
