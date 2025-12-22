@@ -3,14 +3,20 @@ from bpy.props import (StringProperty, PointerProperty, IntProperty, BoolPropert
 from bpy.types import (PropertyGroup, Operator)
 
 import os
+import addon_utils
 
 from . import anim
 
 import subprocess
 
+working_dir = "./tmp"
+for module in addon_utils.modules():
+        if module.__name__ == "SBlenderAssistAddon":
+            working_dir = os.path.dirname(module.__file__)
+            print(working_dir)
 # ================================
 
-class BlenderAssistProperties(PropertyGroup):
+class SBlenderAssistProperties(PropertyGroup):
     # Simple Export Anim
     start_frame: IntProperty(
         name = "Start Frame",
@@ -28,39 +34,39 @@ class BlenderAssistProperties(PropertyGroup):
     )
     output_dir: StringProperty(
         name = "",
-        default = "./tmp/",
+        default = working_dir + os.sep + "tmp" + os.sep,
         maxlen = 1024,
         subtype = "DIR_PATH"
     )
     bones_list: EnumProperty(
         name = "Bones",
-        default = './template/bones/full.pap',
+        default = working_dir + os.sep + 'template/bones/full.pap',
         items = (
-              ('./template/bones/full.pap', "Full Body", "Every bone in a normal animation"),
-              ('./template/bones/upper.sklb', "Upper Body", "Only j_sebo and children"),
+              (working_dir + os.sep + 'template/bones/full.pap', "Full Body", "Every bone in a normal animation"),
+              (working_dir + os.sep + 'template/bones/upper.sklb', "Upper Body", "Only j_sebo and children"),
               )
     )
     race_list: EnumProperty(
         name = "Race",
-        default = './template/race/c0101.sklb',
+        default = working_dir + os.sep + 'template/race/c0101.sklb',
         items = (
-              ('./template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
-              ('./template/race/c0801.sklb', "Miqote F", "C0801"),
+              (working_dir + os.sep + 'template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
+              (working_dir + os.sep + 'template/race/c0801.sklb', "Miqote F", "C0801"),
               )
     )
 
     # Simple Import Anim
     import_path: StringProperty(
         name = "",
-        default = "./template/motion/motion.gltf",
+        default = working_dir + os.sep + "/template/motion/motion.gltf",
         maxlen = 1024,
         subtype = "FILE_PATH"
     )
 
-class BlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
+class SBlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
     bl_idname = "BA_PT_Simple_Import_Anim"
     bl_label = "Simple Import Animation"
-    bl_category = "BlenderAssist"
+    bl_category = "SBlenderAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
@@ -73,10 +79,10 @@ class BlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
         col.label(text="VFXEditor Exported GLTF File")
         col.prop(state, "import_path")
 
-        layout.operator(BlenderAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
+        layout.operator(SBlenderAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
 
-class BlenderAssistSimpleImportAnim(Operator):
-    bl_idname = "b_assist_props.blender_assist_Simple_import_anim"
+class SBlenderAssistSimpleImportAnim(Operator):
+    bl_idname = "b_assist_props.blender_assist_simple_import_anim"
     bl_label = "Blender Assist Operator Simple Import Animation"
 
     def execute(self, context):
@@ -105,8 +111,8 @@ class BlenderAssistSimpleImportAnim(Operator):
     
 # ================================
 
-class BlenderAssistSimpleExportAnim(Operator):
-    bl_idname = "b_assist_props.blender_assist_Simple_export_anim"
+class SBlenderAssistSimpleExportAnim(Operator):
+    bl_idname = "b_assist_props.blender_assist_simple_export_anim"
     bl_label = "Blender Assist Operator Simple Export Animation"
 
     def execute(self, context):
@@ -145,10 +151,10 @@ class BlenderAssistSimpleExportAnim(Operator):
 
         return {'FINISHED'}
         
-class BlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
+class SBlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
     bl_idname = "BA_PT_Simple_Export_Anim"
     bl_label = "Simple Export Animation"
-    bl_category = "BlenderAssist"
+    bl_category = "SBlenderAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
@@ -171,29 +177,30 @@ class BlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
             row.prop(state, "start_frame")
             row.prop(state, "end_frame")     
 
-            box.prop(state, "race_list")
-            box.prop(state, "bones_list")
+            grid = box.grid_flow(columns=1, align=True)
+            grid.prop(state, "race_list")
+            grid.prop(state, "bones_list")
             box.prop(state, "compress_anim")
 
-            layout.operator(BlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
+            layout.operator(SBlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
             layout.label(text='No armature selected', icon='ERROR') 
     
 # ================================
         
 classes = (
-    BlenderAssistProperties,
+    SBlenderAssistProperties,
 
-    BlenderAssistPanelSimpleImportAnim,
-    BlenderAssistSimpleImportAnim,
-    BlenderAssistPanelSimpleExportAnim,
-    BlenderAssistSimpleExportAnim,
+    SBlenderAssistPanelSimpleImportAnim,
+    SBlenderAssistSimpleImportAnim,
+    SBlenderAssistPanelSimpleExportAnim,
+    SBlenderAssistSimpleExportAnim,
 )
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.b_assist_props = PointerProperty(type=BlenderAssistProperties)
+    bpy.types.Scene.b_assist_props = PointerProperty(type=SBlenderAssistProperties)
 
 
 def unregister():
