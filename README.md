@@ -18,7 +18,7 @@ Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entir
 
 ## Quick Start
 
-Click Import(default path will be a template or see next section to get your own file)
+Click Import(default path will be a template or see next section for a detailed guide)
 
 <img width="342" height="204" alt="blender_RsLWDlEx0p" src="https://github.com/user-attachments/assets/58cf9623-00b6-4b4b-aa68-dc1a56ea1633" />  
 
@@ -28,7 +28,7 @@ Select an output directory and click Export
 
 You're done(as far as blender is concerned)
 
-## Using SBlenderAssist to actually edit FFXIV animations
+## Editing FFXIV
 
 See [this document](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
 
