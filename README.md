@@ -1,53 +1,36 @@
-# BlenderAssist
+# SBlenderAssist
 
-An add-on to import FFXIV animations into Blender and export custom ones for use in-game. Based on [AnimAssist](https://github.com/lmcintyre/AnimAssist), but much more scuffed.
+An add-on to import/export FFXIV animations using Blender. Based on [BlenderAssist](https://github.com/0ceal0t/BlenderAssist)
 
 ## Requirements
 
 - [VC++2012 32-bit Redist](https://www.microsoft.com/en-us/download/details.aspx?id=30679#) (`VSU_4\vcredist_x86.exe`)
-- [Blender](https://www.blender.org/)
-- A way to replace an existing `.pap` files like Textools, Penumbra, or VFXEditor 
+- [Blender 4.5](https://www.blender.org/)
+- [VFXEditor](https://github.com/0ceal0t/Dalamud-VFXEditor)
 
 ## Installation
-Download the addon from the [releases](https://github.com/0ceal0t/BlenderAssist/releases). Go to `Edit > Preferences > Add-ons`, press "Install" and select the entire `.zip` file. Make sure to enable the add-on as well.
+Download the addon from the [releases](https://github.com/lumxiv/SBlenderAssist/releases).  
+Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entire `.zip` file. Make sure to enable the add-on as well.
 
 > Note on updating: you may need to uninstall the add-on, restart Blender, and then re-install it
 
-![image](https://user-images.githubusercontent.com/18051158/162598790-56386e08-6182-4691-90b3-ebfc0f88cf9f.png)
+<img width="661" height="547" alt="blender_i2ui8NeGyk" src="https://github.com/user-attachments/assets/11889a9f-b635-4d70-9ce3-c314a39dece7" />
 
-## Usage
+## Quick Start
 
-First, find the `.pap` file of an animation that you want to replace (using a tool like [FFXIVExplorer](https://github.com/goaaats/ffxiv-explorer-fork/tree/index2)), as well as the corresponding `.sklb` skeleton file. For example:
+Click Import(default path will be a template or see next section to get your own file)
 
-```
-chara/human/c1101/skeleton/base/b0001/skl_c1101b0001.sklb
-chara/human/c1101/animation/a0001/bt_common/emote/joy.pap
-```
-Make sure that the ids of the skeleton and the animation match up (in this case `c1101`), and extract both of these files using Textools, FFXIVExplorer, etc.
+<img width="342" height="204" alt="blender_RsLWDlEx0p" src="https://github.com/user-attachments/assets/58cf9623-00b6-4b4b-aa68-dc1a56ea1633" />  
 
-Once you have an animation you want to export, select the armature and open the "BlenderAssist" menu in 3D view (default keybind is "N"), or press the left-facing arrow at the top-right of the 3D view.
+Select an output directory and click Export
 
-Configure the parameters to your liking, **making sure to select the original .pap and .sklb files**. Make sure the animation index also matches that of the animation you want to replace. Most `.pap` files only have a single animation, so leaving it at `0` is fine, but make sure to double-check.
+<img width="331" height="362" alt="blender_LPCM2QXe5Q" src="https://github.com/user-attachments/assets/7678556e-ff5d-418d-adf2-03ac9dbe7813" />
 
-![image](https://user-images.githubusercontent.com/18051158/164119440-961a48fc-d1dd-44f6-be33-561dd30bfb3a.png)
+You're done(as far as blender is concerned)
 
-And import the outputed `.pap` using your modding tool of choice.
+## Using SBlenderAssist to actually edit FFXIV animations
 
-https://user-images.githubusercontent.com/18051158/162326495-ab9ba1c2-fc88-4068-a53d-bf8dd50c83e2.mp4
-
-## Porting Animations
-
-When importing animations from MMD, other games, etc. it's generally a good idea to use a [bone remapping tool](https://github.com/Mwni/blender-animation-retargeting). A small caveat for this specific ones is that it will not work unless just adjust the "Rest alignment" of one of the bones you have mapped. For example, my mapping is:
-
-![image](https://user-images.githubusercontent.com/18051158/162326747-87837006-276d-4436-ba15-6abe2b23652f.png)
-
-So when setting the "Rest alignment", I just wiggled `n_hara` slightly. Also make sure to resize the animation source armature so that is rougly the same size as your target:
-
-![image](https://user-images.githubusercontent.com/18051158/162326875-74f1c72d-999c-4cd8-a882-4d382ec65c92.png)
-
-## TMB and PAP Files
-
-There are parameters in both the `.pap` and `.tmb` files which determine how long an animation is allowed to play, so you may need to adjust them. In addition `.tmb` files often have facial expressions which you may want to remove or adjust using [VFXEditor](https://github.com/0ceal0t/Dalamud-VFXEditor)
+See [this document](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
 
 ## Notes on Building
 
