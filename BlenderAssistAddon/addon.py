@@ -11,7 +11,7 @@ import subprocess
 # ================================
 
 class BlenderAssistProperties(PropertyGroup):
-    # Quick Export Anim
+    # Simple Export Anim
     start_frame: IntProperty(
         name = "Start Frame",
         default = 1,
@@ -49,7 +49,7 @@ class BlenderAssistProperties(PropertyGroup):
               )
     )
 
-    # Quick Import Anim
+    # Simple Import Anim
     import_path: StringProperty(
         name = "",
         default = "./template/motion/motion.gltf",
@@ -57,9 +57,9 @@ class BlenderAssistProperties(PropertyGroup):
         subtype = "FILE_PATH"
     )
 
-class BlenderAssistPanelQuickImportAnim(bpy.types.Panel):
-    bl_idname = "BA_PT_Quick_Import_Anim"
-    bl_label = "Quick Import Animation"
+class BlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
+    bl_idname = "BA_PT_Simple_Import_Anim"
+    bl_label = "Simple Import Animation"
     bl_category = "BlenderAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -73,11 +73,11 @@ class BlenderAssistPanelQuickImportAnim(bpy.types.Panel):
         col.label(text="VFXEditor Exported GLTF File")
         col.prop(state, "import_path")
 
-        layout.operator(BlenderAssistQuickImportAnim.bl_idname, text="Import", icon="PLAY")
+        layout.operator(BlenderAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
 
-class BlenderAssistQuickImportAnim(Operator):
-    bl_idname = "b_assist_props.blender_assist_quick_import_anim"
-    bl_label = "Blender Assist Operator Quick Import Animation"
+class BlenderAssistSimpleImportAnim(Operator):
+    bl_idname = "b_assist_props.blender_assist_Simple_import_anim"
+    bl_label = "Blender Assist Operator Simple Import Animation"
 
     def execute(self, context):
         scene = context.scene
@@ -105,9 +105,9 @@ class BlenderAssistQuickImportAnim(Operator):
     
 # ================================
 
-class BlenderAssistQuickExportAnim(Operator):
-    bl_idname = "b_assist_props.blender_assist_quick_export_anim"
-    bl_label = "Blender Assist Operator Quick Export Animation"
+class BlenderAssistSimpleExportAnim(Operator):
+    bl_idname = "b_assist_props.blender_assist_Simple_export_anim"
+    bl_label = "Blender Assist Operator Simple Export Animation"
 
     def execute(self, context):
         scene = context.scene
@@ -145,9 +145,9 @@ class BlenderAssistQuickExportAnim(Operator):
 
         return {'FINISHED'}
         
-class BlenderAssistPanelQuickExportAnim(bpy.types.Panel):
-    bl_idname = "BA_PT_Quick_Export_Anim"
-    bl_label = "Quick Export Animation"
+class BlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
+    bl_idname = "BA_PT_Simple_Export_Anim"
+    bl_label = "Simple Export Animation"
     bl_category = "BlenderAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -175,7 +175,7 @@ class BlenderAssistPanelQuickExportAnim(bpy.types.Panel):
             box.prop(state, "bones_list")
             box.prop(state, "compress_anim")
 
-            layout.operator(BlenderAssistQuickExportAnim.bl_idname, text="Export", icon="PLAY")
+            layout.operator(BlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
             layout.label(text='No armature selected', icon='ERROR') 
     
@@ -184,10 +184,10 @@ class BlenderAssistPanelQuickExportAnim(bpy.types.Panel):
 classes = (
     BlenderAssistProperties,
 
-    BlenderAssistPanelQuickImportAnim,
-    BlenderAssistQuickImportAnim,
-    BlenderAssistPanelQuickExportAnim,
-    BlenderAssistQuickExportAnim,
+    BlenderAssistPanelSimpleImportAnim,
+    BlenderAssistSimpleImportAnim,
+    BlenderAssistPanelSimpleExportAnim,
+    BlenderAssistSimpleExportAnim,
 )
 
 def register():
