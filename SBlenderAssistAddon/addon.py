@@ -3,17 +3,13 @@ from bpy.props import (StringProperty, PointerProperty, IntProperty, BoolPropert
 from bpy.types import (PropertyGroup, Operator)
 
 import os
-import addon_utils
 
 from . import anim
 
 import subprocess
 
-working_dir = "./tmp"
-for module in addon_utils.modules():
-        if module.__name__ == "SBlenderAssistAddon":
-            working_dir = os.path.dirname(module.__file__)
-            print(working_dir)
+working_dir = dirname = os.path.dirname(os.path.abspath(__file__))
+print(working_dir)
 # ================================
 
 class SBlenderAssistProperties(PropertyGroup):
@@ -22,46 +18,41 @@ class SBlenderAssistProperties(PropertyGroup):
         name = "Start Frame",
         default = 1,
         min = 1
-    )
+    ) # type: ignore
     end_frame: IntProperty(
         name = "End Frame",
         default = 50,
         min = 5
-    )
+    ) # type: ignore
     compress_anim: BoolProperty(
         name = "Compress animation data",
         default = True
-    )
+    ) # type: ignore
     output_dir: StringProperty(
         name = "",
-        default = working_dir + os.sep + "tmp" + os.sep,
+        default = working_dir + "/tmp/",
         maxlen = 1024,
         subtype = "DIR_PATH"
-    )
-    bones_list: EnumProperty(
-        name = "Bones",
-        default = working_dir + os.sep + 'template/bones/full.pap',
-        items = (
-              (working_dir + os.sep + 'template/bones/full.pap', "Full Body", "Every bone in a normal animation"),
-              (working_dir + os.sep + 'template/bones/upper.sklb', "Upper Body", "Only j_sebo and children"),
-              )
-    )
+    ) # type: ignore
     race_list: EnumProperty(
         name = "Race",
-        default = working_dir + os.sep + 'template/race/c0101.sklb',
+        default = working_dir + '/template/race/c0101.sklb',
         items = (
-              (working_dir + os.sep + 'template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
-              (working_dir + os.sep + 'template/race/c0801.sklb', "Miqote F", "C0801"),
-              )
-    )
+                (working_dir + '/template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
+                (working_dir + '/template/race/c0201.sklb', "Midlander F", "C0201"),
+                (working_dir + '/template/race/c0801.sklb', "Miqote F", "C0801"),
+                (working_dir + '/template/race/c0901.sklb', "Roegadyn M", "C0901"),
+                (working_dir + '/template/race/c1101.sklb', "Lalafell M", "C1101"),
+        )
+    ) # type: ignore
 
     # Simple Import Anim
     import_path: StringProperty(
         name = "",
-        default = working_dir + os.sep + "/template/motion/motion.gltf",
+        default = working_dir + '/template/motion/motion.gltf',
         maxlen = 1024,
         subtype = "FILE_PATH"
-    )
+    ) # type: ignore
 
 class SBlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
     bl_idname = "BA_PT_Simple_Import_Anim"
@@ -76,12 +67,15 @@ class SBlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
         state = scene.b_assist_props
 
         col = layout.column()
-        col.label(text="VFXEditor Exported GLTF File")
+        col.label(text="Input GLTF File")
         col.prop(state, "import_path")
 
         layout.operator(SBlenderAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
 
+        layout.operator(SBlenderAssistSimpleImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
+
 class SBlenderAssistSimpleImportAnim(Operator):
+    """Import animation from .gltf file exported by VFXEditor PAP Editor"""
     bl_idname = "b_assist_props.blender_assist_simple_import_anim"
     bl_label = "Blender Assist Operator Simple Import Animation"
 
@@ -109,9 +103,23 @@ class SBlenderAssistSimpleImportAnim(Operator):
         
         return {'FINISHED'}
     
+class SBlenderAssistSimpleImportMesh(Operator):
+    """Import a default Midlander M mesh"""
+    bl_idname = "b_assist_props.blender_assist_simple_import_mesh"
+    bl_label = "Blender Assist Operator Simple Import Mesh"
+
+    def execute(self, context):
+        import_path = working_dir + '/template/mesh/c0101.glb'
+
+        bpy.ops.import_scene.gltf(filepath=import_path, disable_bone_shape=True, guess_original_bind_pose=False)
+        
+        return {'FINISHED'}
+    
 # ================================
 
 class SBlenderAssistSimpleExportAnim(Operator):
+    """Export animation to .hkx to the indicated directory(anim.hkx) using the output race specified\n
+Cannot be used to retarget, needs to match the imported armature\nTo retarget, import an animation using desired skeleton and change its NLA track instead"""
     bl_idname = "b_assist_props.blender_assist_simple_export_anim"
     bl_label = "Blender Assist Operator Simple Export Animation"
 
@@ -120,7 +128,7 @@ class SBlenderAssistSimpleExportAnim(Operator):
         state = scene.b_assist_props
 
         output_dir = state.output_dir
-        anim_in = state.bones_list
+        anim_in = working_dir + '/template/bones/full.pap'
         skl_in = state.race_list
 
         anim_idx = "0"
@@ -179,7 +187,6 @@ class SBlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
 
             grid = box.grid_flow(columns=1, align=True)
             grid.prop(state, "race_list")
-            grid.prop(state, "bones_list")
             box.prop(state, "compress_anim")
 
             layout.operator(SBlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
@@ -193,6 +200,7 @@ classes = (
 
     SBlenderAssistPanelSimpleImportAnim,
     SBlenderAssistSimpleImportAnim,
+    SBlenderAssistSimpleImportMesh,
     SBlenderAssistPanelSimpleExportAnim,
     SBlenderAssistSimpleExportAnim,
 )
