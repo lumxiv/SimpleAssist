@@ -12,16 +12,6 @@ def export(startFrame, endFrame, out_bin_file):
 
     tracks = {}
     for bone in arm_ob.data.bones:
-        excluded = False
-        for exclude_bone in bpy.context.scene.b_assist_props.exclude_bones:
-            if bone.name == exclude_bone.bone:
-                excluded = True
-                print("Excluded: " + bone.name)
-                break
-
-        if excluded:
-            continue
-                
         tracks[bone.name] = []
 
     need_to_add_n_root = "n_root" not in tracks

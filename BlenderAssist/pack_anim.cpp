@@ -190,3 +190,30 @@ int pack_anim(const hkStringBuf anim_idx_str, const hkStringBuf bin_in, const hk
 
     return res;
 }
+
+int quick_pack_anim(const hkStringBuf anim_idx_str, const hkStringBuf bin_in, const hkStringBuf skl_in_sklb, const hkStringBuf anim_in_pap, const hkStringBuf anim_out_path, const hkStringBuf check_if_bound_str, const hkStringBuf compress_anim_str) {
+    PapFile papFile;
+    papFile.read(anim_in_pap);
+
+    SklbFile sklbFile;
+    sklbFile.read(skl_in_sklb);
+
+    auto baseDir = dirnameOf(anim_out_path.cString());
+
+    auto original_anim_temp = concat(baseDir, "original_anim_temp.hkx");
+    papFile.writeHavok(original_anim_temp);
+
+    auto original_skl_temp = concat(baseDir, "original_skl_temp.hkx");
+    sklbFile.writeHavok(original_skl_temp);
+
+    auto new_anim_temp = concat(baseDir, "anim.hkx");
+    auto res = packHavok(anim_idx_str, bin_in, original_skl_temp, original_anim_temp, new_anim_temp, check_if_bound_str, compress_anim_str);
+
+    papFile.replaceHavok(new_anim_temp);
+
+    deleteFile(original_anim_temp);
+    deleteFile(original_skl_temp);
+    //deleteFile(new_anim_temp);
+
+    return res;
+}
