@@ -17,16 +17,11 @@ Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entir
 <img width="661" height="547" alt="blender_i2ui8NeGyk" src="https://github.com/user-attachments/assets/11889a9f-b635-4d70-9ce3-c314a39dece7" />
 
 ## Quick Start
+### Import
+<img width="257" height="210" alt="blender_ZMMKdWbViU" src="https://github.com/user-attachments/assets/637ce1b5-1ff5-4f33-9f01-5e4eee66d249" />
 
-Click Import(default path will be a template or see next section for a detailed guide)
-
-<img width="342" height="204" alt="blender_RsLWDlEx0p" src="https://github.com/user-attachments/assets/58cf9623-00b6-4b4b-aa68-dc1a56ea1633" />  
-
-Select an output directory and click Export
-
-<img width="331" height="362" alt="blender_LPCM2QXe5Q" src="https://github.com/user-attachments/assets/7678556e-ff5d-418d-adf2-03ac9dbe7813" />
-
-You're done(as far as blender is concerned)
+### Export
+<img width="253" height="258" alt="blender_Qe7vDGpFg9" src="https://github.com/user-attachments/assets/7481706b-10f9-486d-95a1-2d783ea6fcee" />
 
 ## Editing FFXIV
 
