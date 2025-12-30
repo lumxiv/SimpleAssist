@@ -16,7 +16,7 @@ Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entir
 
 <img width="661" height="547" alt="blender_i2ui8NeGyk" src="https://github.com/user-attachments/assets/11889a9f-b635-4d70-9ce3-c314a39dece7" />
 
-## Quick Start
+## Overview
 ### Import
 <img width="257" height="210" alt="blender_ZMMKdWbViU" src="https://github.com/user-attachments/assets/637ce1b5-1ff5-4f33-9f01-5e4eee66d249" />
 
@@ -25,7 +25,7 @@ Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entir
 
 ## Editing FFXIV
 
-See [this document](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
+See the [SBlenderAssist Handbook](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
 
 ## Notes on Building
 
@@ -33,4 +33,4 @@ This is taken verbatim from [AnimAssist](https://github.com/lmcintyre/AnimAssist
 
 > Building animassist.exe requires the Havok 2014 SDK and an env var of HAVOK_SDK_ROOT set to the directory, as well as the Visual C++ Platform Toolset v110. This is included in any install of VS2012, including the Community edition. You can find the Havok SDK to compile with in the description of [this video](https://www.youtube.com/watch?v=U88C9K-mSHs). Please note that is NOT a download I control, just a random one from online.
 
-Make sure to set your `HAVOK_SDK_ROOT`, that the CMakeLists `link_directories()` instructions resolves to it and that your CMake is 3.10 otherwise it might not include VS2012.
+Make sure to set your `HAVOK_SDK_ROOT`, that the CMakeLists `link_directories()` instructions resolves to it, and that your CMake is 3.10 otherwise it might not include VS2012.
