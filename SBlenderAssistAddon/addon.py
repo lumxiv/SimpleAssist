@@ -25,8 +25,12 @@ class SBlenderAssistProperties(PropertyGroup):
         min = 5
     ) # type: ignore
     compress_anim: BoolProperty(
-        name = "Compress animation data",
-        default = True
+        name = "Compress",
+        default = False
+    ) # type: ignore
+    all_anim: BoolProperty(
+        name = "All data",
+        default = False
     ) # type: ignore
     output_dir: StringProperty(
         name = "",
@@ -40,9 +44,22 @@ class SBlenderAssistProperties(PropertyGroup):
         items = (
                 (working_dir + '/template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
                 (working_dir + '/template/race/c0201.sklb', "Midlander F", "C0201"),
+                (working_dir + '/template/race/c0301.sklb', "Highlander M", "C0301"),
+                (working_dir + '/template/race/c0401.sklb', "Highlander F", "C0401"),
+                (working_dir + '/template/race/c0501.sklb', "Elezen M", "C0501"),
+                (working_dir + '/template/race/c0601.sklb', "Elezen F", "C0601"),
+                (working_dir + '/template/race/c0701.sklb', "Miqote M", "C0701"),
                 (working_dir + '/template/race/c0801.sklb', "Miqote F", "C0801"),
                 (working_dir + '/template/race/c0901.sklb', "Roegadyn M", "C0901"),
+                (working_dir + '/template/race/c1001.sklb', "Roegadyn F", "C1001"),
                 (working_dir + '/template/race/c1101.sklb', "Lalafell M", "C1101"),
+                (working_dir + '/template/race/c1201.sklb', "Lalafell F", "C1201"),
+                (working_dir + '/template/race/c1301.sklb', "Aura M", "C1301"),
+                (working_dir + '/template/race/c1401.sklb', "Aura F", "C1401"),
+                (working_dir + '/template/race/c1501.sklb', "Hrothgar M", "C1501"),
+                (working_dir + '/template/race/c1601.sklb', "Hrothgar F", "C1601"),
+                (working_dir + '/template/race/c1701.sklb', "Viera M", "C1701"),
+                (working_dir + '/template/race/c1801.sklb', "Viera F", "C1801")
         )
     ) # type: ignore
 
@@ -138,6 +155,10 @@ Cannot be used to retarget, needs to match the imported armature\nTo retarget, i
         if state.compress_anim:
             compress_anim = "1"
 
+        check_original_bound = "1"
+        if state.all_anim:
+            check_original_bound = "0"
+
         dirname = os.path.dirname(os.path.abspath(__file__))
         
         basename = os.path.basename(output_dir)
@@ -187,7 +208,10 @@ class SBlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
 
             grid = box.grid_flow(columns=1, align=True)
             grid.prop(state, "race_list")
-            box.prop(state, "compress_anim")
+
+            row = grid.row(align=True)
+            row.prop(state, "compress_anim")
+            row.prop(state, "all_anim")    
 
             layout.operator(SBlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
