@@ -108,9 +108,11 @@ class SBlenderAssistSimpleImportAnim(Operator):
         ad = ob.animation_data
         ad.nla_tracks.remove(ad.nla_tracks.active)
 
-        for fcurve in ad.action.fcurves:
-            for keyframe_point in fcurve.keyframe_points:
-                keyframe_point.co.x *= 1.25
+        if(ad.action.fcurves[0].keyframe_points[1].co.x != 1):
+            print("Frame 2 was " + str(ad.action.fcurves[0].keyframe_points[1].co.x) + " and got adjusted to 1")
+            for fcurve in ad.action.fcurves:
+                for keyframe_point in fcurve.keyframe_points:
+                    keyframe_point.co.x *= 1.25
         for fcurve in ad.action.fcurves:
             for keyframe_point in fcurve.keyframe_points:
                 keyframe_point.co.x += 1

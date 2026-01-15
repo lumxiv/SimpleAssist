@@ -12,10 +12,10 @@ def export(startFrame, endFrame, out_bin_file):
 
     tracks = {}
     for bone in arm_ob.data.bones:
-        tracks[bone.name] = []
+        if bone.name == "n_root":
+            continue
 
-    need_to_add_n_root = "n_root" not in tracks
-    tracks["n_root"] = []
+        tracks[bone.name] = []
 
     numTracks = len(tracks)
 
@@ -40,9 +40,6 @@ def export(startFrame, endFrame, out_bin_file):
             t.rotation = rotation
             t.scale = scale
             tracks[pose_bone.name].append(t)
-
-        if need_to_add_n_root:
-            tracks["n_root"].append(helper.Transform())
 
     with open(out_bin_file, 'wb') as file:
         helper.write_int(file, numOriginalFrames)
