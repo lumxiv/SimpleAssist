@@ -1,14 +1,14 @@
 bl_info = {
-	"name" : "SBlenderAssist",
+	"name" : "SimpleAssist",
 	"author" : "lumxiv",
 	"description" : "Export custom animations for FFXIV",
 	"version": (1, 0, 0),
 	"blender" : (4, 5, 4),
-	"location" : "3D View > Tools (Right Side) > SBlenderAssist",
+	"location" : "3D View > Tools (Right Side) > SimpleAssist",
 	"warning" : "",
 	"category" : "Animation",
-	"wiki_url": 'https://github.com/lumxiv/SBlenderAssist',
-    "tracker_url": 'https://github.com/lumxiv/SBlenderAssist/issues',
+	"wiki_url": 'https://github.com/lumxiv/SimpleAssist',
+    "tracker_url": 'https://github.com/lumxiv/SimpleAssist/issues',
 }
 
 from . import addon

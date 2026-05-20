@@ -1,4 +1,4 @@
-# SBlenderAssist
+# SimpleAssist
 
 An add-on to import/export FFXIV animations using Blender. Based on [BlenderAssist](https://github.com/0ceal0t/BlenderAssist)
 
@@ -9,7 +9,7 @@ An add-on to import/export FFXIV animations using Blender. Based on [BlenderAssi
 - [VFXEditor](https://github.com/0ceal0t/Dalamud-VFXEditor)
 
 ## Installation
-Download the addon from the [releases](https://github.com/lumxiv/SBlenderAssist/releases).  
+Download the addon from the [releases](https://github.com/lumxiv/SimpleAssist/releases).  
 Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entire `.zip` file. Make sure to enable the add-on as well.
 
 > Note on updating: you may need to uninstall the add-on, restart Blender, and then re-install it
@@ -25,7 +25,7 @@ Go to `Edit > Preferences > Add-ons > Install From Disk...` and select the entir
 
 ## Editing FFXIV
 
-See the [SBlenderAssist Handbook](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
+See the [SimpleAssist Handbook](https://docs.google.com/document/d/136lDxkzdA7ZUULS_fGWDrd_1NsBvTSdtDCbSfNRZ-DE/edit?usp=sharing)
 
 ## Notes on Building
 

@@ -12,7 +12,7 @@ working_dir = dirname = os.path.dirname(os.path.abspath(__file__))
 print(working_dir)
 # ================================
 
-class SBlenderAssistProperties(PropertyGroup):
+class SimpleAssistProperties(PropertyGroup):
     # Simple Export Anim
     start_frame: IntProperty(
         name = "Start Frame",
@@ -71,10 +71,10 @@ class SBlenderAssistProperties(PropertyGroup):
         subtype = "FILE_PATH"
     ) # type: ignore
 
-class SBlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
+class SimpleAssistPanelSimpleImportAnim(bpy.types.Panel):
     bl_idname = "BA_PT_Simple_Import_Anim"
     bl_label = "Simple Import Animation"
-    bl_category = "SBlenderAssist"
+    bl_category = "SimpleAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
@@ -87,11 +87,11 @@ class SBlenderAssistPanelSimpleImportAnim(bpy.types.Panel):
         col.label(text="Input GLTF File")
         col.prop(state, "import_path")
 
-        layout.operator(SBlenderAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
+        layout.operator(SimpleAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
 
-        layout.operator(SBlenderAssistSimpleImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
+        layout.operator(SimpleAssistSimpleImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
 
-class SBlenderAssistSimpleImportAnim(Operator):
+class SimpleAssistSimpleImportAnim(Operator):
     """Import animation from .gltf file exported by VFXEditor PAP Editor"""
     bl_idname = "b_assist_props.blender_assist_simple_import_anim"
     bl_label = "Blender Assist Operator Simple Import Animation"
@@ -122,7 +122,7 @@ class SBlenderAssistSimpleImportAnim(Operator):
         
         return {'FINISHED'}
     
-class SBlenderAssistSimpleImportMesh(Operator):
+class SimpleAssistSimpleImportMesh(Operator):
     """Import a default Midlander M mesh"""
     bl_idname = "b_assist_props.blender_assist_simple_import_mesh"
     bl_label = "Blender Assist Operator Simple Import Mesh"
@@ -136,7 +136,7 @@ class SBlenderAssistSimpleImportMesh(Operator):
     
 # ================================
 
-class SBlenderAssistSimpleExportAnim(Operator):
+class SimpleAssistSimpleExportAnim(Operator):
     """Export animation to .hkx to the indicated directory(anim.hkx) using the output race specified\n
 Cannot be used to retarget, needs to match the imported armature\nTo retarget, import an animation using desired skeleton and change its NLA track instead"""
     bl_idname = "b_assist_props.blender_assist_simple_export_anim"
@@ -182,10 +182,10 @@ Cannot be used to retarget, needs to match the imported armature\nTo retarget, i
 
         return {'FINISHED'}
         
-class SBlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
+class SimpleAssistPanelSimpleExportAnim(bpy.types.Panel):
     bl_idname = "BA_PT_Simple_Export_Anim"
     bl_label = "Simple Export Animation"
-    bl_category = "SBlenderAssist"
+    bl_category = "SimpleAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
@@ -215,26 +215,26 @@ class SBlenderAssistPanelSimpleExportAnim(bpy.types.Panel):
             row.prop(state, "compress_anim")
             row.prop(state, "all_anim")    
 
-            layout.operator(SBlenderAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
+            layout.operator(SimpleAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
             layout.label(text='No armature selected', icon='ERROR') 
     
 # ================================
         
 classes = (
-    SBlenderAssistProperties,
+    SimpleAssistProperties,
 
-    SBlenderAssistPanelSimpleImportAnim,
-    SBlenderAssistSimpleImportAnim,
-    SBlenderAssistSimpleImportMesh,
-    SBlenderAssistPanelSimpleExportAnim,
-    SBlenderAssistSimpleExportAnim,
+    SimpleAssistPanelSimpleImportAnim,
+    SimpleAssistSimpleImportAnim,
+    SimpleAssistSimpleImportMesh,
+    SimpleAssistPanelSimpleExportAnim,
+    SimpleAssistSimpleExportAnim,
 )
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.Scene.b_assist_props = PointerProperty(type=SBlenderAssistProperties)
+    bpy.types.Scene.b_assist_props = PointerProperty(type=SimpleAssistProperties)
 
 
 def unregister():
