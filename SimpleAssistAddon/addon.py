@@ -24,13 +24,15 @@ class SimpleAssistProperties(PropertyGroup):
         default = 50,
         min = 5
     ) # type: ignore
-    compress_anim: BoolProperty(
-        name = "Compress",
-        default = False
-    ) # type: ignore
-    all_anim: BoolProperty(
-        name = "All data",
-        default = False
+    data_list: EnumProperty(
+        name = "Data List",
+        default = '0',
+        items = (
+            ('0', "Default", "Export usually used bones in FFXIV animations"), # value, dropdown-value, tiptool
+            ('1', "Upper", "Export only upper body"),
+            ('2', "Arm", "Export only right arm"),
+            ('3', "All", "Export all bones")
+        )
     ) # type: ignore
     output_dir: StringProperty(
         name = "",
@@ -39,7 +41,7 @@ class SimpleAssistProperties(PropertyGroup):
         subtype = "DIR_PATH"
     ) # type: ignore
     race_list: EnumProperty(
-        name = "Race",
+        name = "Bone List",
         default = working_dir + '/template/race/c0101.sklb',
         items = (
                 (working_dir + '/template/race/c0101.sklb', "Midlander M", "C0101"), # value, dropdown-value, tiptool
@@ -110,16 +112,17 @@ class SimpleAssistSimpleImportAnim(Operator):
 
         if(ad.action.fcurves[0].keyframe_points[1].co.x != 1):
             print("Frame 2 was " + str(ad.action.fcurves[0].keyframe_points[1].co.x) + " and got adjusted to 1")
+            multiplier = 1 / ad.action.fcurves[0].keyframe_points[1].co.x
             for fcurve in ad.action.fcurves:
                 for keyframe_point in fcurve.keyframe_points:
-                    keyframe_point.co.x *= 1.25
+                    keyframe_point.co.x = round(keyframe_point.co.x * multiplier)
         for fcurve in ad.action.fcurves:
             for keyframe_point in fcurve.keyframe_points:
                 keyframe_point.co.x += 1
 
         dummy = ob.children[0]
         bpy.data.objects.remove(dummy)
-        
+
         return {'FINISHED'}
     
 class SimpleAssistSimpleImportMesh(Operator):
@@ -137,8 +140,8 @@ class SimpleAssistSimpleImportMesh(Operator):
 # ================================
 
 class SimpleAssistSimpleExportAnim(Operator):
-    """Export animation to .hkx to the indicated directory(anim.hkx) using the output race specified\n
-Cannot be used to retarget, needs to match the imported armature\nTo retarget, import an animation using desired skeleton and change its NLA track instead"""
+    """Export animation to .hkx to the indicated directory(anim.hkx) using the output bone list specified\n
+Cannot be used to retarget\nTo retarget, import an animation using desired skeleton and change its NLA tracks as necessary"""
     bl_idname = "b_assist_props.blender_assist_simple_export_anim"
     bl_label = "Blender Assist Operator Simple Export Animation"
 
@@ -152,14 +155,15 @@ Cannot be used to retarget, needs to match the imported armature\nTo retarget, i
 
         anim_idx = "0"
         check_original_bound = "1"
-
         compress_anim = "0"
-        if state.compress_anim:
-            compress_anim = "1"
 
-        check_original_bound = "1"
-        if state.all_anim:
-            check_original_bound = "0"
+        match state.data_list:
+            case '1': 
+                anim_in = working_dir + '/template/bones/upper.pap'
+            case '2':
+                anim_in = working_dir + '/template/bones/arm.pap'
+            case '3':
+                check_original_bound = "0"
 
         dirname = os.path.dirname(os.path.abspath(__file__))
         
@@ -210,10 +214,7 @@ class SimpleAssistPanelSimpleExportAnim(bpy.types.Panel):
 
             grid = box.grid_flow(columns=1, align=True)
             grid.prop(state, "race_list")
-
-            row = grid.row(align=True)
-            row.prop(state, "compress_anim")
-            row.prop(state, "all_anim")    
+            grid.prop(state, "data_list")
 
             layout.operator(SimpleAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
         else:

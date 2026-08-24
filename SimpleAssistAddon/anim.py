@@ -8,7 +8,7 @@ def export(startFrame, endFrame, out_bin_file):
     bpy.context.active_object.select_set(state=True)
 
     numOriginalFrames = endFrame - startFrame
-    duration = float(numOriginalFrames - 1) * 0.0333333333333333
+    duration = float(numOriginalFrames) * 0.0345
 
     tracks = {}
     for bone in arm_ob.data.bones:
