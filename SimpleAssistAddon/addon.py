@@ -73,9 +73,9 @@ class SimpleAssistProperties(PropertyGroup):
         subtype = "FILE_PATH"
     ) # type: ignore
 
-class SimpleAssistPanelSimpleImportAnim(bpy.types.Panel):
-    bl_idname = "BA_PT_Simple_Import_Anim"
-    bl_label = "Simple Import Animation"
+class SimpleAssistPanelImportAnim(bpy.types.Panel):
+    bl_idname = "BA_PT_Import_Anim"
+    bl_label = "Import Animation"
     bl_category = "SimpleAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -89,14 +89,14 @@ class SimpleAssistPanelSimpleImportAnim(bpy.types.Panel):
         col.label(text="Input GLTF File")
         col.prop(state, "import_path")
 
-        layout.operator(SimpleAssistSimpleImportAnim.bl_idname, text="Import", icon="PLAY")
+        layout.operator(SimpleAssistImportAnim.bl_idname, text="Import", icon="PLAY")
 
-        layout.operator(SimpleAssistSimpleImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
+        layout.operator(SimpleAssistImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
 
-class SimpleAssistSimpleImportAnim(Operator):
+class SimpleAssistImportAnim(Operator):
     """Import animation from .gltf file exported by VFXEditor PAP Editor"""
-    bl_idname = "b_assist_props.blender_assist_simple_import_anim"
-    bl_label = "Blender Assist Operator Simple Import Animation"
+    bl_idname = "b_assist_props.blender_assist_import_anim"
+    bl_label = "Blender Assist Operator Import Animation"
 
     def execute(self, context):
         scene = context.scene
@@ -125,10 +125,10 @@ class SimpleAssistSimpleImportAnim(Operator):
 
         return {'FINISHED'}
     
-class SimpleAssistSimpleImportMesh(Operator):
+class SimpleAssistImportMesh(Operator):
     """Import a default Midlander M mesh"""
-    bl_idname = "b_assist_props.blender_assist_simple_import_mesh"
-    bl_label = "Blender Assist Operator Simple Import Mesh"
+    bl_idname = "b_assist_props.blender_assist_import_mesh"
+    bl_label = "Blender Assist Operator Import Mesh"
 
     def execute(self, context):
         import_path = working_dir + '/template/mesh/c0101.glb'
@@ -136,14 +136,53 @@ class SimpleAssistSimpleImportMesh(Operator):
         bpy.ops.import_scene.gltf(filepath=import_path, disable_bone_shape=True, guess_original_bind_pose=False)
         
         return {'FINISHED'}
-    
+
 # ================================
 
-class SimpleAssistSimpleExportAnim(Operator):
+class SimpleAssistPanelEdit(bpy.types.Panel):
+    bl_idname = "BA_PT_Edit"
+    bl_label = "Edit"
+    bl_category = "SimpleAssist"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+
+    def draw(self, context):
+        layout = self.layout
+        if context.object != None and context.object.type == 'ARMATURE':
+
+            split = layout.row().split()
+            split.operator(SimpleAssistEditConstraint.bl_idname, text="Constraint", icon="CONSTRAINT")
+            split.operator(SimpleAssistEditTail.bl_idname, text="Tail Constraints", icon="CON_FOLLOWTRACK")
+        else:
+            layout.label(text='No armature selected', icon='ERROR') 
+
+class SimpleAssistEditConstraint(Operator):
+    """Add constraints to relevant joints"""
+    bl_idname = "b_assist_props.blender_assist_edit_constraint"
+    bl_label = "Blender Assist Operator Edit Constraint"
+
+    def execute(self, context):
+        anim.curatePose(context.object)
+
+        return {'FINISHED'}
+
+class SimpleAssistEditTail(Operator):
+    """Add constraints to tail bones"""
+    bl_idname = "b_assist_props.blender_assist_edit_tail"
+    bl_label = "Blender Assist Operator Edit Tail"
+
+    def execute(self, context):
+        anim.tailTrack(context.object)
+
+        return {'FINISHED'}
+        
+# ================================
+
+class SimpleAssistExportAnim(Operator):
     """Export animation to .hkx to the indicated directory(anim.hkx) using the output bone list specified\n
 Cannot be used to retarget\nTo retarget, import an animation using desired skeleton and change its NLA tracks as necessary"""
-    bl_idname = "b_assist_props.blender_assist_simple_export_anim"
-    bl_label = "Blender Assist Operator Simple Export Animation"
+    bl_idname = "b_assist_props.blender_assist_export_anim"
+    bl_label = "Blender Assist Operator Export Animation"
 
     def execute(self, context):
         scene = context.scene
@@ -186,9 +225,9 @@ Cannot be used to retarget\nTo retarget, import an animation using desired skele
 
         return {'FINISHED'}
         
-class SimpleAssistPanelSimpleExportAnim(bpy.types.Panel):
-    bl_idname = "BA_PT_Simple_Export_Anim"
-    bl_label = "Simple Export Animation"
+class SimpleAssistPanelExportAnim(bpy.types.Panel):
+    bl_idname = "BA_PT_Export_Anim"
+    bl_label = "Export Animation"
     bl_category = "SimpleAssist"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -216,7 +255,7 @@ class SimpleAssistPanelSimpleExportAnim(bpy.types.Panel):
             grid.prop(state, "race_list")
             grid.prop(state, "data_list")
 
-            layout.operator(SimpleAssistSimpleExportAnim.bl_idname, text="Export", icon="PLAY")
+            layout.operator(SimpleAssistExportAnim.bl_idname, text="Export", icon="PLAY")
         else:
             layout.label(text='No armature selected', icon='ERROR') 
     
@@ -225,11 +264,14 @@ class SimpleAssistPanelSimpleExportAnim(bpy.types.Panel):
 classes = (
     SimpleAssistProperties,
 
-    SimpleAssistPanelSimpleImportAnim,
-    SimpleAssistSimpleImportAnim,
-    SimpleAssistSimpleImportMesh,
-    SimpleAssistPanelSimpleExportAnim,
-    SimpleAssistSimpleExportAnim,
+    SimpleAssistPanelImportAnim,
+    SimpleAssistImportAnim,
+    SimpleAssistImportMesh,
+    SimpleAssistPanelEdit,
+    SimpleAssistEditConstraint,
+    SimpleAssistEditTail,
+    SimpleAssistPanelExportAnim,
+    SimpleAssistExportAnim,
 )
 
 def register():
