@@ -64,8 +64,8 @@ def curatePose(object):
     limitRot(object, "j_ude_a_r", XYZ(Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708)))
     limitRot(object, "j_ude_b_r", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-2.61799,0)))
     limitRot(object, "j_asi_a_r", XYZ(Rotation(-0.785398,0.785398),Rotation(-0.436332,0.785398),Rotation(-2.44346,0.785398)))
-    limitRot(object, "j_asi_b_r", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-1.309,0)))
-    limitRot(object, "j_asi_c_r", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-1.309,0)))
+    limitRot(object, "j_asi_b_r", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,1.309)))
+    limitRot(object, "j_asi_c_r", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,1.309)))
     limitRot(object, "j_asi_d_r", XYZ(Rotation(-0.523599,0.523599),Rotation(-0.523599,0.523599),Rotation(-0.785398,-0.785398)))
 
     limitRot(object, "j_te_l", XYZ(Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708),Rotation(-1.309,1.309)))
@@ -73,8 +73,8 @@ def curatePose(object):
     limitRot(object, "j_ude_a_l", XYZ(Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708)))
     limitRot(object, "j_ude_b_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-2.61799,0)))
     limitRot(object, "j_asi_a_l", XYZ(Rotation(-0.785398,0.785398),Rotation(-0.436332,0.785398),Rotation(-2.44346,0.785398)))
-    limitRot(object, "j_asi_b_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-1.309,0)))
-    limitRot(object, "j_asi_c_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(-1.309,0)))
+    limitRot(object, "j_asi_b_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,1.309)))
+    limitRot(object, "j_asi_c_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,1.309)))
     limitRot(object, "j_asi_d_l", XYZ(Rotation(-0.523599,0.523599),Rotation(-0.523599,0.523599),Rotation(-0.785398,-0.785398)))
 
     limitRot(object, "j_kosi", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
