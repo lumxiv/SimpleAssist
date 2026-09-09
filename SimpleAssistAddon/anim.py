@@ -59,6 +59,9 @@ def curatePose(object):
     muteChannels(object, "n_hkata_l")
     muteChannels(object, "n_hhiji_l")
 
+    limitRot(object, "n_root", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,0)))
+    #limitRot(object, "n_hara", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,0)))
+
     limitRot(object, "j_te_r", XYZ(Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708),Rotation(-1.309,1.309)))
     limitRot(object, "j_sako_r", XYZ(Rotation(-0.261799,0.261799),Rotation(-0.261799,0.261799),Rotation(-0.261799,0.610865)))
     limitRot(object, "j_ude_a_r", XYZ(Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708),Rotation(-1.5708,1.5708)))
@@ -77,8 +80,10 @@ def curatePose(object):
     limitRot(object, "j_asi_c_l", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,1.309)))
     limitRot(object, "j_asi_d_l", XYZ(Rotation(-0.523599,0.523599),Rotation(-0.523599,0.523599),Rotation(-0.785398,-0.785398)))
 
-    limitRot(object, "j_kosi", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
-    limitRot(object, "j_sebo_a", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
+    #sebo and kosi can be used as rotation substitute to n_hara, better not add these all the time
+    #limitRot(object, "j_kosi", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
+    #limitRot(object, "j_sebo_a", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
+
     limitRot(object, "j_sebo_b", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
     limitRot(object, "j_sebo_c", XYZ(Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066),Rotation(-0.349066,0.349066)))
 
