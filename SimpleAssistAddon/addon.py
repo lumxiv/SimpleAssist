@@ -1,5 +1,5 @@
 import bpy
-from bpy.props import (StringProperty, PointerProperty, IntProperty, BoolProperty, EnumProperty)                    
+from bpy.props import (StringProperty, PointerProperty, IntProperty, EnumProperty)                    
 from bpy.types import (PropertyGroup, Operator)
 
 import os
@@ -151,8 +151,9 @@ class SimpleAssistPanelEdit(bpy.types.Panel):
         if context.object != None and context.object.type == 'ARMATURE':
 
             split = layout.row().split()
-            split.operator(SimpleAssistEditConstraint.bl_idname, text="Constraint", icon="CONSTRAINT")
-            split.operator(SimpleAssistEditTail.bl_idname, text="Tail Constraints", icon="CON_FOLLOWTRACK")
+            split.operator(SimpleAssistEditConstraint.bl_idname, text="Cons", icon="CONSTRAINT")
+            split.operator(SimpleAssistEditTail.bl_idname, text="Tail", icon="CON_FOLLOWTRACK")
+            split.operator(SimpleAssistEditSkirt.bl_idname, text="Skirt", icon="FORCE_FORCE")
         else:
             layout.label(text='No armature selected', icon='ERROR') 
 
@@ -173,6 +174,18 @@ class SimpleAssistEditTail(Operator):
 
     def execute(self, context):
         anim.tailTrack(context.object)
+
+        return {'FINISHED'}
+
+class SimpleAssistEditSkirt(Operator):
+    """Add constraints to skirt bones"""
+    bl_idname = "b_assist_props.blender_assist_edit_skirt"
+    bl_label = "Blender Assist Operator Edit Skirt"
+
+    def execute(self, context):
+        armature = context.object
+        anim.addSkirtBones(context)
+        anim.skirtTrack(armature)
 
         return {'FINISHED'}
         
@@ -270,6 +283,7 @@ classes = (
     SimpleAssistPanelEdit,
     SimpleAssistEditConstraint,
     SimpleAssistEditTail,
+    SimpleAssistEditSkirt,
     SimpleAssistPanelExportAnim,
     SimpleAssistExportAnim,
 )

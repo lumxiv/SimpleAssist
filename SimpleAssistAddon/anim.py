@@ -26,18 +26,47 @@ def limitRot(object, name, xyz: XYZ):
     bone.ik_min_z = xyz.Z.min
 
 def tailTrack(object):
-    dampedTrack(object, "n_sippo_a", "n_sippo_b", .2)
-    dampedTrack(object, "n_sippo_b", "n_sippo_c", .4)
-    dampedTrack(object, "n_sippo_c", "n_sippo_d", .6)
-    dampedTrack(object, "n_sippo_d", "n_sippo_e", .8)
+    dampedTrackCn(object, "n_sippo_a", "n_sippo_b", .2)
+    dampedTrackCn(object, "n_sippo_b", "n_sippo_c", .4)
+    dampedTrackCn(object, "n_sippo_c", "n_sippo_d", .6)
+    dampedTrackCn(object, "n_sippo_d", "n_sippo_e", .8)
 
-def dampedTrack(object, source, target, influence):
+def dampedTrackObjCn(object, source, target, influence):
     pose = object.pose
+    name = "Simple Damped Track Obj"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+    
     cn = pose.bones[pose.bones.find(source)].constraints.new(type="DAMPED_TRACK")
+    cn.name = name
+    cn.target = bpy.data.objects.get(target)
+    cn.influence = influence
+    cn.track_axis = "TRACK_X"
+
+def dampedTrackCn(object, source, target, influence):
+    pose = object.pose
+    name = "Simple Damped Track"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+    
+    cn = pose.bones[pose.bones.find(source)].constraints.new(type="DAMPED_TRACK")
+    cn.name = name
     cn.target = object
     cn.subtarget = target
     cn.influence = influence
     cn.track_axis = "TRACK_X"
+
+def copyTransformCn(object, target, subtarget, influence):
+    name = "Simple Copy Transform"
+    if object.constraints.find(name) != -1:
+        return
+    
+    cn = object.constraints.new(type="COPY_TRANSFORMS")
+    cn.name = name
+    cn.target = target
+    cn.subtarget = subtarget
+    cn.influence = influence
+    cn.mix_mode = "BEFORE_FULL"
 
 def curatePose(object):
     lockIKXY(object, "j_ude_b_r")
@@ -59,6 +88,7 @@ def curatePose(object):
     muteChannels(object, "n_hkata_l")
     muteChannels(object, "n_hhiji_l")
 
+    muteChannels(object, "n_root")
     limitRot(object, "n_root", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,0)))
     #limitRot(object, "n_hara", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,0)))
 
@@ -103,7 +133,12 @@ def muteChannels(object, name):
 
 def wristCn(object, source, target):
     pose = object.pose
+    name = "Simple Copy Rotation"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+
     cn = pose.bones[pose.bones.find(source)].constraints.new(type="COPY_ROTATION")
+    cn.name = name
     cn.target = object
     cn.subtarget = target
     cn.use_y = False
@@ -114,7 +149,12 @@ def wristCn(object, source, target):
 
 def shoulderCn(object, source, target):
     pose = object.pose
+    name = "Simple Copy Rotation"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+    
     cn = pose.bones[pose.bones.find(source)].constraints.new(type="COPY_ROTATION")
+    cn.name = name
     cn.target = object
     cn.subtarget = target
     cn.invert_x = True
@@ -126,7 +166,12 @@ def shoulderCn(object, source, target):
 
 def elbowCn(object, source, target):
     pose = object.pose
+    name = "Simple Locked Track"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+
     cn = pose.bones[pose.bones.find(source)].constraints.new(type="LOCKED_TRACK")
+    cn.name = name
     cn.target = object
     cn.subtarget = target
     cn.track_axis = "TRACK_NEGATIVE_X"
@@ -137,6 +182,82 @@ def lockIKXY(object, name):
     pose = object.pose
     pose.bones[pose.bones.find(name)].lock_ik_x = True
     pose.bones[pose.bones.find(name)].lock_ik_y = True
+
+def addFakeBone(context, name, parent, offset):
+    if bpy.data.objects.get(name) != None:
+        return
+    
+    armature = context.object
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.add()
+    ob = context.object
+    ob.name = name
+    ob.parent = armature
+    ob.location = offset
+    ob.empty_display_size = .05
+    ob.empty_display_type = "SPHERE"
+    ob.hide_viewport = True
+    copyTransformCn(ob, armature, parent, 1)
+    bpy.ops.object.select_all(action='DESELECT')
+    armature.select_set(True)
+    bpy.context.view_layer.objects.active = armature
+
+def addSkirtBones(context):
+    offsetFw = -.20
+    offsetSi = .14
+    offsetBk = .22
+    addFakeBone(context, "j_sk_f_a_dt_r", "j_asi_b_r", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_a_dt_r", "j_asi_b_r", (0, 0, -offsetSi))
+    addFakeBone(context, "j_sk_b_a_dt_r", "j_asi_b_r", (0, offsetBk, 0))
+    addFakeBone(context, "j_sk_f_a_dt_l", "j_asi_b_l", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_a_dt_l", "j_asi_b_l", (0, 0, offsetSi))
+    addFakeBone(context, "j_sk_b_a_dt_l", "j_asi_b_l", (0, offsetBk, 0))
+
+    addFakeBone(context, "j_sk_f_b_dt_r", "j_asi_c_r", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_b_dt_r", "j_asi_c_r", (0, 0, -offsetSi))
+    addFakeBone(context, "j_sk_b_b_dt_r", "j_asi_d_r", (0, offsetBk, 0))
+    addFakeBone(context, "j_sk_f_b_dt_l", "j_asi_c_l", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_b_dt_l", "j_asi_c_l", (0, 0, offsetSi))
+    addFakeBone(context, "j_sk_b_b_dt_l", "j_asi_d_l", (0, offsetBk, 0))
+
+    addFakeBone(context, "j_sk_f_c_dt_r", "j_asi_c_r", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_c_dt_r", "j_asi_d_r", (0, 0, -offsetSi))
+    addFakeBone(context, "j_sk_b_c_dt_r", "j_asi_d_r", (0, offsetBk, 0))
+    addFakeBone(context, "j_sk_f_c_dt_l", "j_asi_c_l", (0, offsetFw, 0))
+    addFakeBone(context, "j_sk_s_c_dt_l", "j_asi_d_l", (0, 0, offsetSi))
+    addFakeBone(context, "j_sk_b_c_dt_l", "j_asi_d_l", (0, offsetBk, 0))
+
+def skirtCn(object):
+    dampedTrackObjCn(object, "j_sk_f_a_r", "j_sk_f_a_dt_r", 1)
+    dampedTrackObjCn(object, "j_sk_s_a_r", "j_sk_s_a_dt_r", 1)
+    dampedTrackObjCn(object, "j_sk_b_a_r", "j_sk_b_a_dt_r", 1)
+    dampedTrackObjCn(object, "j_sk_f_a_l", "j_sk_f_a_dt_l", 1)
+    dampedTrackObjCn(object, "j_sk_s_a_l", "j_sk_s_a_dt_l", 1)
+    dampedTrackObjCn(object, "j_sk_b_a_l", "j_sk_b_a_dt_l", 1)
+
+    dampedTrackObjCn(object, "j_sk_f_b_r", "j_sk_f_b_dt_r", .5)
+    dampedTrackObjCn(object, "j_sk_s_b_r", "j_sk_s_b_dt_r", .5)
+    dampedTrackObjCn(object, "j_sk_b_b_r", "j_sk_b_b_dt_r", .5)
+    dampedTrackObjCn(object, "j_sk_f_b_l", "j_sk_f_b_dt_l", .5)
+    dampedTrackObjCn(object, "j_sk_s_b_l", "j_sk_s_b_dt_l", .5)
+    dampedTrackObjCn(object, "j_sk_b_b_l", "j_sk_b_b_dt_l", .5)
+
+    dampedTrackObjCn(object, "j_sk_f_c_r", "j_sk_f_c_dt_r", .5)
+    dampedTrackObjCn(object, "j_sk_s_c_r", "j_sk_s_c_dt_r", .5)
+    dampedTrackObjCn(object, "j_sk_b_c_r", "j_sk_b_c_dt_r", 1)
+    dampedTrackObjCn(object, "j_sk_f_c_l", "j_sk_f_c_dt_l", .5)
+    dampedTrackObjCn(object, "j_sk_s_c_l", "j_sk_s_c_dt_l", .5)
+    dampedTrackObjCn(object, "j_sk_b_c_l", "j_sk_b_c_dt_l", 1)
+
+def skirtTrack(object):
+    skirtCn(object)
+    muteChannels(object, "j_sk_f_a_r")
+    muteChannels(object, "j_sk_s_a_r")
+    muteChannels(object, "j_sk_b_a_r")
+    muteChannels(object, "j_sk_f_a_l")
+    muteChannels(object, "j_sk_s_a_l")
+    muteChannels(object, "j_sk_b_a_l")
 
 def export(startFrame, endFrame, out_bin_file):
     arm_ob = helper.detect_armature()
