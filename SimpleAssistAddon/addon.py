@@ -91,7 +91,9 @@ class SimpleAssistPanelImportAnim(bpy.types.Panel):
 
         layout.operator(SimpleAssistImportAnim.bl_idname, text="Import", icon="PLAY")
 
-        layout.operator(SimpleAssistImportMesh.bl_idname, text="Import Mannequin", icon="MESH_DATA")
+        split = layout.row().split()
+        split.operator(SimpleAssistImportHyur.bl_idname, text="Import Hyur M", icon="MESH_DATA")
+        split.operator(SimpleAssistImportMiqo.bl_idname, text="Import Miqo F", icon="MESH_DATA")
 
 class SimpleAssistImportAnim(Operator):
     """Import animation from .gltf file exported by VFXEditor PAP Editor"""
@@ -125,13 +127,25 @@ class SimpleAssistImportAnim(Operator):
 
         return {'FINISHED'}
     
-class SimpleAssistImportMesh(Operator):
+class SimpleAssistImportHyur(Operator):
     """Import a default Midlander M mesh"""
-    bl_idname = "b_assist_props.blender_assist_import_mesh"
-    bl_label = "Blender Assist Operator Import Mesh"
+    bl_idname = "b_assist_props.blender_assist_import_hyur"
+    bl_label = "Blender Assist Operator Import Hyur"
 
     def execute(self, context):
         import_path = working_dir + '/template/mesh/c0101.glb'
+
+        bpy.ops.import_scene.gltf(filepath=import_path, disable_bone_shape=True, guess_original_bind_pose=False)
+        
+        return {'FINISHED'}
+
+class SimpleAssistImportMiqo(Operator):
+    """Import a default Miqo F mesh"""
+    bl_idname = "b_assist_props.blender_assist_import_miqo"
+    bl_label = "Blender Assist Operator Import Miqo"
+
+    def execute(self, context):
+        import_path = working_dir + '/template/mesh/c0801.glb'
 
         bpy.ops.import_scene.gltf(filepath=import_path, disable_bone_shape=True, guess_original_bind_pose=False)
         
@@ -279,7 +293,8 @@ classes = (
 
     SimpleAssistPanelImportAnim,
     SimpleAssistImportAnim,
-    SimpleAssistImportMesh,
+    SimpleAssistImportHyur,
+    SimpleAssistImportMiqo,
     SimpleAssistPanelEdit,
     SimpleAssistEditConstraint,
     SimpleAssistEditTail,
