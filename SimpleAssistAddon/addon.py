@@ -13,7 +13,6 @@ print(working_dir)
 # ================================
 
 class SimpleAssistProperties(PropertyGroup):
-    # Simple Export Anim
     start_frame: IntProperty(
         name = "Start Frame",
         default = 1,
@@ -61,14 +60,21 @@ class SimpleAssistProperties(PropertyGroup):
                 (working_dir + '/template/race/c1501.sklb', "Hrothgar M", "C1501"),
                 (working_dir + '/template/race/c1601.sklb', "Hrothgar F", "C1601"),
                 (working_dir + '/template/race/c1701.sklb', "Viera M", "C1701"),
-                (working_dir + '/template/race/c1801.sklb', "Viera F", "C1801")
+                (working_dir + '/template/race/c1801.sklb', "Viera F", "C1801"),
+                ('other', "Other (Pick below)", "")
         )
     ) # type: ignore
 
-    # Simple Import Anim
     import_path: StringProperty(
         name = "",
         default = working_dir + '/template/motion/motion.gltf',
+        maxlen = 1024,
+        subtype = "FILE_PATH"
+    ) # type: ignore
+
+    export_sklb: StringProperty(
+        name = "",
+        default = working_dir + '/template/race/c0101.sklb',
         maxlen = 1024,
         subtype = "FILE_PATH"
     ) # type: ignore
@@ -218,6 +224,8 @@ Cannot be used to retarget\nTo retarget, import an animation using desired skele
         output_dir = state.output_dir
         anim_in = working_dir + '/template/bones/full.pap'
         skl_in = state.race_list
+        if(skl_in == 'other'):
+            skl_in = state.export_sklb
 
         anim_idx = "0"
         check_original_bound = "1"
@@ -280,6 +288,11 @@ class SimpleAssistPanelExportAnim(bpy.types.Panel):
 
             grid = box.grid_flow(columns=1, align=True)
             grid.prop(state, "race_list")
+            if(state.race_list == 'other'):
+                col = grid.column()
+                col.label(text="Input SKLB")
+                col.prop(state, "export_sklb")
+
             grid.prop(state, "data_list")
 
             layout.operator(SimpleAssistExportAnim.bl_idname, text="Export", icon="PLAY")
