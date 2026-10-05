@@ -160,7 +160,7 @@ def shoulderCn(object, source, target):
     cn.invert_x = True
     cn.use_y = False
     cn.use_z = False
-    cn.influence = 0.5
+    cn.influence = 1
     cn.owner_space = "LOCAL"
     cn.target_space = "LOCAL"
 
