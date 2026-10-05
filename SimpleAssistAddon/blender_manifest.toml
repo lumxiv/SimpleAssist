@@ -1,0 +1,33 @@
+schema_version = "1.0.0"
+
+id = "simple_assist"
+version = "1.4.0"
+name = "SimpleAssist"
+tagline = "Export custom animations for FFXIV"
+maintainer = "lumxiv <https://github.com/lumxiv>"
+type = "add-on"
+
+website = "https://github.com/lumxiv/SimpleAssist"
+
+tags = ["Animation", "Import-Export"]
+
+blender_version_min = "5.2.0"
+
+# Change to your actual license.
+license = ["SPDX:GPL-3.0-or-later"]
+
+# blenderassist.exe is a Windows binary.
+platforms = ["windows-x64"]
+
+[permissions]
+files = "Import glTF animations and export .hkx files"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "/dist/",
+  "/.git/",
+  "/launch.json",
+  "/build.cmd",
+  "*.zip",
+]

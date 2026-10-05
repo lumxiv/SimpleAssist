@@ -5,7 +5,7 @@ An add-on to import/export FFXIV animations using Blender. Based on [BlenderAssi
 ## Requirements
 
 - [VC++2012 32-bit Redist](https://www.microsoft.com/en-us/download/details.aspx?id=30679#) (`VSU_4\vcredist_x86.exe`)
-- [Blender 4.5](https://www.blender.org/)
+- [Blender 5.2](https://www.blender.org/)
 - [VFXEditor](https://github.com/0ceal0t/Dalamud-VFXEditor)
 
 ## Installation
