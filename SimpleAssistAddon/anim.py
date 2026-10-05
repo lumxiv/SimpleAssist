@@ -144,8 +144,8 @@ def wristCn(object, source, target):
     cn.use_y = False
     cn.use_z = False
     cn.influence = 0.5
-    cn.owner_space = "LOCAL"
-    cn.target_space = "LOCAL"
+    cn.owner_space = "POSE"
+    cn.target_space = "POSE"
 
 def shoulderCn(object, source, target):
     pose = object.pose
@@ -160,9 +160,9 @@ def shoulderCn(object, source, target):
     cn.invert_x = True
     cn.use_y = False
     cn.use_z = False
-    cn.influence = 1
-    cn.owner_space = "LOCAL"
-    cn.target_space = "LOCAL"
+    cn.influence = 0.5
+    cn.owner_space = "POSE"
+    cn.target_space = "POSE"
 
 def elbowCn(object, source, target):
     pose = object.pose
