@@ -1,1 +1,26 @@
-//use ctrl + shift + p > Blender: Start cos idk how to hook it up in here
+{
+    // Debugging SimpleAssist in Blender with the "Blender Development" VS Code extension.
+    // Easiest path: Ctrl+Shift+P > "Blender: Start", which launches Blender, loads the
+    // add-on and attaches the debugger for you (no launch config needed).
+    // Use this config to attach manually to an already running Blender that was
+    // started by that extension (default debug port 5678).
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to Blender",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "justMyCode": false,
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ]
+        }
+    ]
+}

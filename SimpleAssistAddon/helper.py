@@ -20,6 +20,26 @@ class Transform(object):
         write_vector4_raw(file, q)
         write_vector4_raw(file, s)
 
+def get_fcurves(anim_data):
+    """Return all F-curves of the active action/slot (Blender 5.x layered actions)."""
+    action = anim_data.action if anim_data else None
+    if action is None:
+        return []
+    slot = anim_data.action_slot
+    fcurves = []
+    for layer in action.layers:
+        for strip in layer.strips:
+            if strip.type != 'KEYFRAME':
+                continue
+            if slot is not None:
+                cb = strip.channelbag(slot)
+                if cb:
+                    fcurves.extend(cb.fcurves)
+            else:
+                for cb in strip.channelbags:
+                    fcurves.extend(cb.fcurves)
+    return fcurves
+
 def write_headerstring(file, value):
     bytes = value.encode('utf-8')
     file.write(bytes)

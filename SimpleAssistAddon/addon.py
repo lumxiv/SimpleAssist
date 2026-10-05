@@ -5,6 +5,7 @@ from bpy.types import (PropertyGroup, Operator)
 import os
 
 from . import anim
+from . import helper
 
 import subprocess
 
@@ -118,15 +119,17 @@ class SimpleAssistImportAnim(Operator):
         ad = ob.animation_data
         ad.nla_tracks.remove(ad.nla_tracks.active)
 
-        if(ad.action.fcurves[0].keyframe_points[1].co.x != 1):
-            print("Frame 2 was " + str(ad.action.fcurves[0].keyframe_points[1].co.x) + " and got adjusted to 1")
-            multiplier = 1 / ad.action.fcurves[0].keyframe_points[1].co.x
-            for fcurve in ad.action.fcurves:
-                for keyframe_point in fcurve.keyframe_points:
-                    keyframe_point.co.x = round(keyframe_point.co.x * multiplier)
-        for fcurve in ad.action.fcurves:
-            for keyframe_point in fcurve.keyframe_points:
-                keyframe_point.co.x += 1
+        fcurves = helper.get_fcurves(ad)
+        if fcurves and fcurves[0].keyframe_points[1].co.x != 1:
+            second = fcurves[0].keyframe_points[1].co.x
+            print("Frame 2 was " + str(second) + " and got adjusted to 1")
+            multiplier = 1 / second
+            for fcurve in fcurves:
+                for kp in fcurve.keyframe_points:
+                    kp.co.x = round(kp.co.x * multiplier)
+        for fcurve in fcurves:
+            for kp in fcurve.keyframe_points:
+                kp.co.x += 1
 
         dummy = ob.children[0]
         bpy.data.objects.remove(dummy)

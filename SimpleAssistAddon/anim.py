@@ -119,10 +119,9 @@ def curatePose(object):
 
 def muteChannels(object, name):
     ad = object.animation_data
-    if hasattr(ad, 'action'):
-        for fcurve in ad.action.fcurves:
-            if fcurve.data_path.startswith('pose.bones["' + name + '"]'):
-                fcurve.mute = True
+    for fcurve in helper.get_fcurves(ad):
+        if fcurve.data_path.startswith('pose.bones["' + name + '"]'):
+            fcurve.mute = True
 
     for pbone in object.pose.bones:
         if(pbone.name == name):
