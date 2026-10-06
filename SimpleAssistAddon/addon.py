@@ -171,20 +171,21 @@ class SimpleAssistPanelEdit(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        if context.object != None and context.object.type == 'ARMATURE':
-
-            split = layout.row().split()
-            split.operator(SimpleAssistEditConstraint.bl_idname, text="Cons", icon="CONSTRAINT")
-            split.operator(SimpleAssistEditTail.bl_idname, text="Tail", icon="CON_FOLLOWTRACK")
-            split.operator(SimpleAssistEditSkirt.bl_idname, text="Skirt", icon="FORCE_FORCE")
-        else:
-            layout.label(text='No armature selected', icon='ERROR') 
+        split = layout.row().split()
+        split.operator(SimpleAssistEditConstraint.bl_idname, text="Cons", icon="CONSTRAINT")
+        split.operator(SimpleAssistEditTail.bl_idname, text="Tail", icon="CON_FOLLOWTRACK")
+        split.operator(SimpleAssistEditSkirt.bl_idname, text="Skirt", icon="FORCE_FORCE")
 
 class SimpleAssistEditConstraint(Operator):
     """Add constraints to relevant joints"""
     bl_idname = "b_assist_props.blender_assist_edit_constraint"
-    bl_label = "Blender Assist Operator Edit Constraint"
+    bl_label = "Add Joint Constraints"
+    bl_options = {'REGISTER', 'UNDO'}
 
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type == 'ARMATURE'
+    
     def execute(self, context):
         anim.curatePose(context.object)
 
@@ -193,8 +194,13 @@ class SimpleAssistEditConstraint(Operator):
 class SimpleAssistEditTail(Operator):
     """Add constraints to tail bones"""
     bl_idname = "b_assist_props.blender_assist_edit_tail"
-    bl_label = "Blender Assist Operator Edit Tail"
+    bl_label = "Add Tail Constraints"
+    bl_options = {'REGISTER', 'UNDO'}
 
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type == 'ARMATURE'
+    
     def execute(self, context):
         anim.tailTrack(context.object)
 
@@ -203,7 +209,12 @@ class SimpleAssistEditTail(Operator):
 class SimpleAssistEditSkirt(Operator):
     """Add constraints to skirt bones"""
     bl_idname = "b_assist_props.blender_assist_edit_skirt"
-    bl_label = "Blender Assist Operator Edit Skirt"
+    bl_label = "Add Skirt Constraints"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         armature = context.object
