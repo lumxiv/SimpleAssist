@@ -267,53 +267,39 @@ def skirtTrack(object):
     muteChannels(object, "j_sk_s_a_l")
     muteChannels(object, "j_sk_b_a_l")
 
+FRAME_TIME = 1/30
+
 def export(startFrame, endFrame, out_bin_file):
     arm_ob = helper.detect_armature()
-    bpy.context.view_layer.objects.active = arm_ob
-    bpy.context.active_object.select_set(state=True)
+    scene = bpy.context.scene
+    original_frame = scene.frame_current
 
-    numOriginalFrames = endFrame - startFrame
-    duration = float(numOriginalFrames - 1) * 0.0345
+    numFrames = endFrame - startFrame + 1          # inclusive
+    duration = (numFrames - 1) * FRAME_TIME
 
-    tracks = {}
-    for bone in arm_ob.data.bones:
-        if bone.name == "n_root" or helper.is_helper_bone(bone):
-            continue
-        tracks[bone.name] = []
+    tracks = {b.name: [] for b in arm_ob.data.bones
+              if b.name != "n_root" and not helper.is_helper_bone(b)}
 
-    numTracks = len(tracks)
+    try:
+        for i in range(numFrames):
+            scene.frame_set(startFrame + i)
+            for pb in arm_ob.pose.bones:
+                if pb.name not in tracks:
+                    continue
+                m = (pb.parent.matrix.inverted() @ pb.matrix) if pb.parent else pb.matrix
+                loc, rot, scl = m.decompose()
+                t = helper.Transform()
+                t.translation, t.rotation, t.scale = loc, rot, scl
+                tracks[pb.name].append(t)
+    finally:
+        scene.frame_set(original_frame)            # don't leave the user on the last frame
 
-    current_frame = 0
-    for current_frame in range(numOriginalFrames + 1):
-        #current_time = current_frame * 0.0333333333333333
-        bpy.context.scene.frame_set(current_frame + startFrame)
-
-        for pose_bone in arm_ob.pose.bones:
-            if pose_bone.name not in tracks:
-                continue
-            bone = pose_bone.bone
-            
-            if pose_bone.parent:
-                m = pose_bone.parent.matrix.inverted() @ pose_bone.matrix
-            else:
-                m = pose_bone.matrix
-
-            location, rotation, scale = m.decompose()
-            t = helper.Transform()
-            t.translation = location
-            t.rotation = rotation
-            t.scale = scale
-            tracks[pose_bone.name].append(t)
-
-    with open(out_bin_file, 'wb') as file:
-        helper.write_int(file, numOriginalFrames)
-        helper.write_int(file, numTracks)
-        helper.write_float(file, duration)
-        
-        for track_name in tracks:
-            helper.write_cstring(file, track_name)
-            
-        for current_frame in range(numOriginalFrames + 1):
-            for track_name in tracks:
-                transform = tracks[track_name][current_frame]
-                transform.write(file)
+    with open(out_bin_file, 'wb') as f:
+        helper.write_int(f, numFrames)
+        helper.write_int(f, len(tracks))
+        helper.write_float(f, duration)
+        for name in tracks:
+            helper.write_cstring(f, name)
+        for i in range(numFrames):
+            for name in tracks:
+                tracks[name][i].write(f)
