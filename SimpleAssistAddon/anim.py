@@ -14,8 +14,13 @@ class XYZ:
         self.Y = Y
         self.Z = Z
 
+def get_pbone(obj, name):
+    return obj.pose.bones.get(name)   # None if missing
+
 def limitRot(object, name, xyz: XYZ):
-    bone = object.pose.bones[object.pose.bones.find(name)]
+    bone = get_pbone(object, name)
+    if bone is None:
+        return
     bone.use_ik_limit_x = True
     bone.use_ik_limit_y = True
     bone.use_ik_limit_z = True
@@ -47,12 +52,14 @@ def dampedTrackHelperCn(object, source, helper, influence):
     cn.track_axis = "TRACK_X"
 
 def dampedTrackCn(object, source, target, influence):
-    pose = object.pose
+    bone = get_pbone(object, source)
+    if bone is None:
+        return
     name = "Simple Damped Track"
-    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+    if bone.constraints.find(name) != -1:
         return
     
-    cn = pose.bones[pose.bones.find(source)].constraints.new(type="DAMPED_TRACK")
+    cn = bone.constraints.new(type="DAMPED_TRACK")
     cn.name = name
     cn.target = object
     cn.subtarget = target
@@ -134,12 +141,14 @@ def muteChannels(object, name):
             pbone.scale = (1.0, 1.0, 1.0)
 
 def wristCn(object, source, target):
-    pose = object.pose
+    bone = get_pbone(object, source)
+    if bone is None:
+        return
     name = "Simple Copy Rotation"
-    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+    if bone.constraints.find(name) != -1:
         return
 
-    cn = pose.bones[pose.bones.find(source)].constraints.new(type="COPY_ROTATION")
+    cn = bone.constraints.new(type="COPY_ROTATION")
     cn.name = name
     cn.target = object
     cn.subtarget = target
@@ -181,9 +190,11 @@ def elbowCn(object, source, target):
     cn.influence = 0.5
 
 def lockIKXY(object, name):
-    pose = object.pose
-    pose.bones[pose.bones.find(name)].lock_ik_x = True
-    pose.bones[pose.bones.find(name)].lock_ik_y = True
+    bone = get_pbone(object, name)
+    if bone is None:
+        return
+    bone.lock_ik_x = True
+    bone.lock_ik_y = True
 
 def addHelperBones(context, specs):
     """specs: list of (name, parent_bone_name, offset in parent's local space)."""
