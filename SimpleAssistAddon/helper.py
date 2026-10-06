@@ -20,6 +20,12 @@ class Transform(object):
         write_vector4_raw(file, q)
         write_vector4_raw(file, s)
 
+HELPER_PROP = "simple_assist_helper"
+
+def is_helper_bone(bone):
+    """True for bones the addon added only as constraint targets (never exported)."""
+    return bool(bone.get(HELPER_PROP, False))
+
 def get_fcurves(anim_data):
     """Return all F-curves of the active action/slot (Blender 5.x layered actions)."""
     action = anim_data.action if anim_data else None

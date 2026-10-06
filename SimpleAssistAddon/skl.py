@@ -12,6 +12,8 @@ def export(out_bin_file):
     bone_parent = {}
 
     for bone in arm_ob.data.bones:
+        if helper.is_helper_bone(bone):
+            continue
         bone_names.append(bone.name)
 
         if bone.parent:

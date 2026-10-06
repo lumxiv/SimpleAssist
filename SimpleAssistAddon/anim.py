@@ -1,6 +1,7 @@
 import bpy
 
 from . import helper
+from mathutils import Vector
 
 class Rotation:
     def __init__(self, min, max):
@@ -31,15 +32,17 @@ def tailTrack(object):
     dampedTrackCn(object, "n_sippo_c", "n_sippo_d", .6)
     dampedTrackCn(object, "n_sippo_d", "n_sippo_e", .8)
 
-def dampedTrackObjCn(object, source, target, influence):
+def dampedTrackHelperCn(object, source, helper, influence):
     pose = object.pose
-    name = "Simple Damped Track Obj"
-    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+    name = "Simple Damped Track Helper"
+    pb = pose.bones[pose.bones.find(source)]
+    if pb.constraints.find(name) != -1:
         return
-    
-    cn = pose.bones[pose.bones.find(source)].constraints.new(type="DAMPED_TRACK")
+
+    cn = pb.constraints.new(type="DAMPED_TRACK")
     cn.name = name
-    cn.target = bpy.data.objects.get(target)
+    cn.target = object
+    cn.subtarget = helper
     cn.influence = influence
     cn.track_axis = "TRACK_X"
 
@@ -143,8 +146,8 @@ def wristCn(object, source, target):
     cn.use_y = False
     cn.use_z = False
     cn.influence = 0.5
-    cn.owner_space = "POSE"
-    cn.target_space = "POSE"
+    cn.owner_space = "LOCAL"
+    cn.target_space = "LOCAL"
 
 def shoulderCn(object, source, target):
     pose = object.pose
@@ -160,8 +163,8 @@ def shoulderCn(object, source, target):
     cn.use_y = False
     cn.use_z = False
     cn.influence = 0.5
-    cn.owner_space = "POSE"
-    cn.target_space = "POSE"
+    cn.owner_space = "LOCAL"
+    cn.target_space = "LOCAL"
 
 def elbowCn(object, source, target):
     pose = object.pose
@@ -182,74 +185,67 @@ def lockIKXY(object, name):
     pose.bones[pose.bones.find(name)].lock_ik_x = True
     pose.bones[pose.bones.find(name)].lock_ik_y = True
 
-def addFakeBone(context, name, parent, offset):
-    if bpy.data.objects.get(name) != None:
-        return
-    
+def addHelperBones(context, specs):
+    """specs: list of (name, parent_bone_name, offset in parent's local space)."""
     armature = context.object
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.ops.object.add()
-    ob = context.object
-    ob.name = name
-    ob.parent = armature
-    ob.location = offset
-    ob.empty_display_size = .05
-    ob.empty_display_type = "SPHERE"
-    ob.hide_viewport = True
-    copyTransformCn(ob, armature, parent, 1)
-    bpy.ops.object.select_all(action='DESELECT')
-    armature.select_set(True)
-    bpy.context.view_layer.objects.active = armature
+    prev_mode = armature.mode
+    created = []
+
+    bpy.ops.object.mode_set(mode='EDIT')
+    edit_bones = armature.data.edit_bones
+    for name, parent, offset in specs:
+        if name in edit_bones or parent not in edit_bones:
+            continue
+        parent_eb = edit_bones[parent]
+        eb = edit_bones.new(name)
+        eb.head = parent_eb.matrix @ Vector(offset)
+        eb.tail = eb.head + Vector((0, 0, 0.02))
+        eb.parent = parent_eb
+        eb.use_connect = False
+        eb.use_deform = False
+        created.append(name)
+    bpy.ops.object.mode_set(mode=prev_mode)
+
+    for name in created:
+        bone = armature.data.bones[name]
+        bone[helper.HELPER_PROP] = True
+        bone.hide = True
 
 def addSkirtBones(context):
-    prefix = context.object.name
     offsetFw = -.20
     offsetSi = .14
     offsetBk = .22
-    addFakeBone(context, prefix + " j_sk_f_a_dt_r", "j_asi_b_r", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_a_dt_r", "j_asi_b_r", (0, 0, -offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_a_dt_r", "j_asi_b_r", (0, offsetBk, 0))
-    addFakeBone(context, prefix + " j_sk_f_a_dt_l", "j_asi_b_l", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_a_dt_l", "j_asi_b_l", (0, 0, offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_a_dt_l", "j_asi_b_l", (0, offsetBk, 0))
+    specs = [
+        ("j_sk_f_a_dt_r", "j_asi_b_r", (0, offsetFw, 0)),
+        ("j_sk_s_a_dt_r", "j_asi_b_r", (0, 0, -offsetSi)),
+        ("j_sk_b_a_dt_r", "j_asi_b_r", (0, offsetBk, 0)),
+        ("j_sk_f_a_dt_l", "j_asi_b_l", (0, offsetFw, 0)),
+        ("j_sk_s_a_dt_l", "j_asi_b_l", (0, 0, offsetSi)),
+        ("j_sk_b_a_dt_l", "j_asi_b_l", (0, offsetBk, 0)),
 
-    addFakeBone(context, prefix + " j_sk_f_b_dt_r", "j_asi_c_r", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_b_dt_r", "j_asi_c_r", (0, 0, -offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_b_dt_r", "j_asi_d_r", (0, offsetBk, 0))
-    addFakeBone(context, prefix + " j_sk_f_b_dt_l", "j_asi_c_l", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_b_dt_l", "j_asi_c_l", (0, 0, offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_b_dt_l", "j_asi_d_l", (0, offsetBk, 0))
+        ("j_sk_f_b_dt_r", "j_asi_c_r", (0, offsetFw, 0)),
+        ("j_sk_s_b_dt_r", "j_asi_c_r", (0, 0, -offsetSi)),
+        ("j_sk_b_b_dt_r", "j_asi_d_r", (0, offsetBk, 0)),
+        ("j_sk_f_b_dt_l", "j_asi_c_l", (0, offsetFw, 0)),
+        ("j_sk_s_b_dt_l", "j_asi_c_l", (0, 0, offsetSi)),
+        ("j_sk_b_b_dt_l", "j_asi_d_l", (0, offsetBk, 0)),
 
-    addFakeBone(context, prefix + " j_sk_f_c_dt_r", "j_asi_c_r", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_c_dt_r", "j_asi_d_r", (0, 0, -offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_c_dt_r", "j_asi_d_r", (0, offsetBk, 0))
-    addFakeBone(context, prefix + " j_sk_f_c_dt_l", "j_asi_c_l", (0, offsetFw, 0))
-    addFakeBone(context, prefix + " j_sk_s_c_dt_l", "j_asi_d_l", (0, 0, offsetSi))
-    addFakeBone(context, prefix + " j_sk_b_c_dt_l", "j_asi_d_l", (0, offsetBk, 0))
+        ("j_sk_f_c_dt_r", "j_asi_c_r", (0, offsetFw, 0)),
+        ("j_sk_s_c_dt_r", "j_asi_d_r", (0, 0, -offsetSi)),
+        ("j_sk_b_c_dt_r", "j_asi_d_r", (0, offsetBk, 0)),
+        ("j_sk_f_c_dt_l", "j_asi_c_l", (0, offsetFw, 0)),
+        ("j_sk_s_c_dt_l", "j_asi_d_l", (0, 0, offsetSi)),
+        ("j_sk_b_c_dt_l", "j_asi_d_l", (0, offsetBk, 0)),
+    ]
+    addHelperBones(context, specs)
 
 def skirtCn(object):
-    prefix = object.name
-    dampedTrackObjCn(object, "j_sk_f_a_r", prefix + " j_sk_f_a_dt_r", 1)
-    dampedTrackObjCn(object, "j_sk_s_a_r", prefix + " j_sk_s_a_dt_r", 1)
-    dampedTrackObjCn(object, "j_sk_b_a_r", prefix + " j_sk_b_a_dt_r", 1)
-    dampedTrackObjCn(object, "j_sk_f_a_l", prefix + " j_sk_f_a_dt_l", 1)
-    dampedTrackObjCn(object, "j_sk_s_a_l", prefix + " j_sk_s_a_dt_l", 1)
-    dampedTrackObjCn(object, "j_sk_b_a_l", prefix + " j_sk_b_a_dt_l", 1)
-
-    dampedTrackObjCn(object, "j_sk_f_b_r", prefix + " j_sk_f_b_dt_r", .5)
-    dampedTrackObjCn(object, "j_sk_s_b_r", prefix + " j_sk_s_b_dt_r", .5)
-    dampedTrackObjCn(object, "j_sk_b_b_r", prefix + " j_sk_b_b_dt_r", .5)
-    dampedTrackObjCn(object, "j_sk_f_b_l", prefix + " j_sk_f_b_dt_l", .5)
-    dampedTrackObjCn(object, "j_sk_s_b_l", prefix + " j_sk_s_b_dt_l", .5)
-    dampedTrackObjCn(object, "j_sk_b_b_l", prefix + " j_sk_b_b_dt_l", .5)
-
-    dampedTrackObjCn(object, "j_sk_f_c_r", prefix + " j_sk_f_c_dt_r", .5)
-    dampedTrackObjCn(object, "j_sk_s_c_r", prefix + " j_sk_s_c_dt_r", .5)
-    dampedTrackObjCn(object, "j_sk_b_c_r", prefix + " j_sk_b_c_dt_r", 1)
-    dampedTrackObjCn(object, "j_sk_f_c_l", prefix + " j_sk_f_c_dt_l", .5)
-    dampedTrackObjCn(object, "j_sk_s_c_l", prefix + " j_sk_s_c_dt_l", .5)
-    dampedTrackObjCn(object, "j_sk_b_c_l", prefix + " j_sk_b_c_dt_l", 1)
+    for side in ("r", "l"):
+        for part in ("f", "s", "b"):
+            dampedTrackHelperCn(object, f"j_sk_{part}_a_{side}", f"j_sk_{part}_a_dt_{side}", 1)
+            dampedTrackHelperCn(object, f"j_sk_{part}_b_{side}", f"j_sk_{part}_b_dt_{side}", .5)
+            # back "c" bones track at full influence, front/side at .5
+            dampedTrackHelperCn(object, f"j_sk_{part}_c_{side}", f"j_sk_{part}_c_dt_{side}", 1 if part == "b" else .5)
 
 def skirtTrack(object):
     skirtCn(object)
@@ -270,9 +266,8 @@ def export(startFrame, endFrame, out_bin_file):
 
     tracks = {}
     for bone in arm_ob.data.bones:
-        if bone.name == "n_root":
+        if bone.name == "n_root" or helper.is_helper_bone(bone):
             continue
-
         tracks[bone.name] = []
 
     numTracks = len(tracks)

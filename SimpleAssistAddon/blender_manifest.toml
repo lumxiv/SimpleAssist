@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "simple_assist"
-version = "1.4.0"
+version = "1.4.1"
 name = "SimpleAssist"
 tagline = "Export custom animations for FFXIV"
 maintainer = "lumxiv <https://github.com/lumxiv>"
@@ -20,7 +20,7 @@ license = ["SPDX:GPL-3.0-or-later"]
 platforms = ["windows-x64"]
 
 [permissions]
-files = "Import glTF animations and export .hkx files"
+files = "Export custom animations for FFXIV"
 
 [build]
 paths_exclude_pattern = [
