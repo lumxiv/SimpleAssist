@@ -85,18 +85,32 @@ def curatePose(object):
     lockIKXY(object, "j_ude_b_l")
     lockIKXY(object, "j_asi_b_l")
     lockIKXY(object, "j_asi_c_l")
+
     wristCn(object, "n_hte_r", "j_te_r")
     shoulderCn(object, "n_hkata_r", "j_ude_a_r")
-    elbowCn(object, "n_hhiji_r", "j_ude_a_r")
+    xJointCn(object, "n_hhiji_r", "j_ude_a_r", True)
+    xJointCn(object, "n_hijisoubi_r", "j_ude_a_r", True)
+    limitDistance(object, "n_hijisoubi_r", "n_hhiji_r")
+    xJointCn(object, "n_kataarmor_r", "j_kubi", True)
+    xJointCn(object, "j_buki_kosi_r", "j_asi_a_r", True)
     wristCn(object, "n_hte_l", "j_te_l")
     shoulderCn(object, "n_hkata_l", "j_ude_a_l")
-    elbowCn(object, "n_hhiji_l", "j_ude_a_l")
+    xJointCn(object, "n_hhiji_l", "j_ude_a_l", True)
+    xJointCn(object, "n_hijisoubi_l", "j_ude_a_l", True)
+    limitDistance(object, "n_hijisoubi_l", "n_hhiji_l")
+    xJointCn(object, "n_kataarmor_l", "j_kubi", True)
+    xJointCn(object, "j_buki_kosi_l", "j_asi_a_l", True)
+
     muteChannels(object, "n_hte_r")
     muteChannels(object, "n_hkata_r")
     muteChannels(object, "n_hhiji_r")
+    muteChannels(object, "n_hijisoubi_r")
+    muteChannels(object, "n_kataarmor_r")
     muteChannels(object, "n_hte_l")
     muteChannels(object, "n_hkata_l")
     muteChannels(object, "n_hhiji_l")
+    muteChannels(object, "n_hijisoubi_l")
+    muteChannels(object, "n_kataarmor_l")
 
     muteChannels(object, "n_root")
     limitRot(object, "n_root", XYZ(Rotation(0,0),Rotation(0,0),Rotation(0,0)))
@@ -171,11 +185,28 @@ def shoulderCn(object, source, target):
     cn.invert_x = True
     cn.use_y = False
     cn.use_z = False
-    cn.influence = 0.5
+    cn.influence = 1
     cn.owner_space = "LOCAL"
     cn.target_space = "LOCAL"
 
-def elbowCn(object, source, target):
+def limitDistance(object, source, target):
+    pose = object.pose
+    name = "Simple Limit Distance"
+    if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
+        return
+    
+    cn = pose.bones[pose.bones.find(source)].constraints.new(type="LIMIT_DISTANCE")
+    cn.name = name
+    cn.target = object
+    cn.subtarget = target
+    cn.limit_mode = "LIMITDIST_OUTSIDE"
+    cn.influence = 1
+    cn.owner_space = "LOCAL"
+    cn.target_space = "LOCAL"
+    cn.head_tail = .5
+    cn.distance = .1
+
+def xJointCn(object, source, target, negative):
     pose = object.pose
     name = "Simple Locked Track"
     if pose.bones[pose.bones.find(source)].constraints.find(name) != -1:
@@ -185,7 +216,10 @@ def elbowCn(object, source, target):
     cn.name = name
     cn.target = object
     cn.subtarget = target
-    cn.track_axis = "TRACK_NEGATIVE_X"
+    if(negative):
+        cn.track_axis = "TRACK_NEGATIVE_X"
+    else:
+        cn.track_axis = "TRACK_X"
     cn.lock_axis = "LOCK_Z"
     cn.influence = 0.5
 
@@ -260,12 +294,18 @@ def skirtCn(object):
 
 def skirtTrack(object):
     skirtCn(object)
+    dampedTrackHelperCn(object, "j_buki2_kosi_r", "j_sk_s_a_dt_r", .5)
+    dampedTrackHelperCn(object, "j_buki2_kosi_l", "j_sk_s_a_dt_l", .5)
+    
     muteChannels(object, "j_sk_f_a_r")
     muteChannels(object, "j_sk_s_a_r")
     muteChannels(object, "j_sk_b_a_r")
     muteChannels(object, "j_sk_f_a_l")
     muteChannels(object, "j_sk_s_a_l")
     muteChannels(object, "j_sk_b_a_l")
+
+    muteChannels(object, "j_buki2_kosi_r")
+    muteChannels(object, "j_buki2_kosi_l")
 
 FRAME_TIME = 1/30
 

@@ -105,7 +105,8 @@ class SimpleAssistPanelImportAnim(bpy.types.Panel):
 class SimpleAssistImportAnim(Operator):
     """Import animation from .gltf file exported by VFXEditor PAP Editor"""
     bl_idname = "b_assist_props.blender_assist_import_anim"
-    bl_label = "Blender Assist Operator Import Animation"
+    bl_label = "Import GTLF Animation"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         scene = context.scene
@@ -139,7 +140,8 @@ class SimpleAssistImportAnim(Operator):
 class SimpleAssistImportHyur(Operator):
     """Import a default Midlander M mesh"""
     bl_idname = "b_assist_props.blender_assist_import_hyur"
-    bl_label = "Blender Assist Operator Import Hyur"
+    bl_label = "Import Hyur Mannequin"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         import_path = working_dir + '/template/mesh/c0101.glb'
@@ -151,7 +153,8 @@ class SimpleAssistImportHyur(Operator):
 class SimpleAssistImportMiqo(Operator):
     """Import a default Miqo F mesh"""
     bl_idname = "b_assist_props.blender_assist_import_miqo"
-    bl_label = "Blender Assist Operator Import Miqo"
+    bl_label = "Import Miqo'te Mannequin"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         import_path = working_dir + '/template/mesh/c0801.glb'
@@ -177,7 +180,7 @@ class SimpleAssistPanelEdit(bpy.types.Panel):
         split.operator(SimpleAssistEditSkirt.bl_idname, text="Skirt", icon="FORCE_FORCE")
 
 class SimpleAssistEditConstraint(Operator):
-    """Add constraints to relevant joints"""
+    """Add constraints to relevant bones"""
     bl_idname = "b_assist_props.blender_assist_edit_constraint"
     bl_label = "Add Joint Constraints"
     bl_options = {'REGISTER', 'UNDO'}
