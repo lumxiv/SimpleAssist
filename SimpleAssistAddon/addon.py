@@ -238,7 +238,7 @@ Cannot be used to retarget\nTo retarget, import an animation using desired skele
         scene = context.scene
         state = scene.b_assist_props
 
-        output_dir = state.output_dir
+        output_dir = bpy.path.abspath(state.output_dir)
         anim_in = working_dir + '/template/bones/full.pap'
         skl_in = state.race_list
         if(skl_in == 'other'):
@@ -257,10 +257,19 @@ Cannot be used to retarget\nTo retarget, import an animation using desired skele
                 check_original_bound = "0"
 
         dirname = os.path.dirname(os.path.abspath(__file__))
-        
+
+        # Make sure the temp folder and the output folder exist
+        tmp_dir = os.path.join(dirname, 'tmp')
+        try:
+            os.makedirs(tmp_dir, exist_ok=True)
+            os.makedirs(os.path.dirname(output_dir), exist_ok=True)
+        except OSError as e:
+            self.report({'ERROR'}, "Could not create folder: " + str(e))
+            return {'CANCELLED'}
+
         basename = os.path.basename(output_dir)
         basename, _ = os.path.splitext(basename)
-        anim_bin_file = dirname + '/tmp/' + basename + '.bin'
+        anim_bin_file = os.path.join(tmp_dir, basename + '.bin')
 
         print("Starting exporting to bin: " + anim_bin_file)
         anim.export(
