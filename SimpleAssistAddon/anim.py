@@ -99,7 +99,7 @@ def curatePose(object):
     xJointCn(object, "n_hijisoubi_l", "j_ude_a_l", True)
     limitDistance(object, "n_hijisoubi_l", "n_hhiji_l")
     xJointCn(object, "n_kataarmor_l", "j_kubi", True)
-    xJointCn(object, "j_buki_kosi_l", "j_asi_a_l", True)
+    xJointCn(object, "j_buki_kosi_l", "j_asi_a_l", False)
 
     muteChannels(object, "n_hte_r")
     muteChannels(object, "n_hkata_r")

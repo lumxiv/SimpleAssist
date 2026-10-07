@@ -1,19 +1,14 @@
 schema_version = "1.0.0"
 
 id = "simple_assist"
-version = "1.4.4"
+version = "1.4.5"
 name = "SimpleAssist"
 tagline = "Export custom animations for FFXIV"
 maintainer = "lumxiv <https://github.com/lumxiv>"
 type = "add-on"
-
 website = "https://github.com/lumxiv/SimpleAssist"
-
 tags = ["Animation", "Import-Export"]
-
 blender_version_min = "5.2.0"
-
-# Change to your actual license.
 license = ["SPDX:GPL-3.0-or-later"]
 
 # blenderassist.exe is a Windows binary.
