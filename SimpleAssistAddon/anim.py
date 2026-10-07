@@ -316,8 +316,8 @@ def export(startFrame, endFrame, out_bin_file):
     scene = bpy.context.scene
     original_frame = scene.frame_current
 
-    numFrames = endFrame - startFrame + 1          # inclusive
-    duration = (numFrames - 1) * FRAME_TIME
+    numFrames = endFrame - startFrame + 1 # inclusive
+    duration = numFrames * FRAME_TIME
 
     tracks = {b.name: [] for b in arm_ob.data.bones
               if b.name != "n_root" and not helper.is_helper_bone(b)}
@@ -334,10 +334,10 @@ def export(startFrame, endFrame, out_bin_file):
                 t.translation, t.rotation, t.scale = loc, rot, scl
                 tracks[pb.name].append(t)
     finally:
-        scene.frame_set(original_frame)            # don't leave the user on the last frame
+        scene.frame_set(original_frame) # don't leave the user on the last frame
 
     with open(out_bin_file, 'wb') as f:
-        helper.write_int(f, numFrames)
+        helper.write_int(f, numFrames - 1) # remove it
         helper.write_int(f, len(tracks))
         helper.write_float(f, duration)
         for name in tracks:
