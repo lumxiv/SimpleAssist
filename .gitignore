@@ -1,3 +1,4 @@
 Cmake/
 SimpleAssistAddon/dist
+SimpleAssistAddon/tmp
 __pycache__

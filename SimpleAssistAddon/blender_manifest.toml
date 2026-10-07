@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "simple_assist"
-version = "1.4.5"
+version = "1.4.6"
 name = "SimpleAssist"
 tagline = "Export custom animations for FFXIV"
 maintainer = "lumxiv <https://github.com/lumxiv>"
@@ -21,6 +21,7 @@ files = "Export custom animations for FFXIV"
 paths_exclude_pattern = [
   "__pycache__/",
   "/dist/",
+  "/tmp/",
   "/.git/",
   "/launch.json",
   "/build.cmd",

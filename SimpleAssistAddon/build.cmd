@@ -23,6 +23,6 @@ if %errorlevel%==0 (
 rem Fallback: plain zip with Windows' built-in tar (forward-slash paths, Blender-safe).
 echo Blender not found, falling back to tar.
 tar -a -cf dist\simple_assist-1.0.0.zip ^
-    --exclude=dist --exclude=__pycache__ --exclude=.git ^
+    --exclude=dist --exclude=tmp --exclude=__pycache__ --exclude=.git ^
     --exclude=launch.json --exclude=build.cmd *
 exit /b %errorlevel%
